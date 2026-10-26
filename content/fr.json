@@ -1,0 +1,370 @@
+{
+  "meta": {
+    "locale": "fr",
+    "dir": "ltr",
+    "title": "Jabri Oussama — Développeur Web & Mobile",
+    "description": "Portfolio de Jabri Oussama : développeur web & mobile, étudiant en Master Informatique à l'Université de Technologie du Henan, et créateur de contenu numérique."
+  },
+  "person": {
+    "name": "Jabri Oussama",
+    "role": "Développeur Web & Mobile",
+    "email": "oussamajb24@gmail.com",
+    "phones": ["+216 29 530 920", "+86 195 1554 4574"],
+    "location": "Béja, Tunisie / Zhengzhou, Chine",
+    "socials": {
+      "github": "https://github.com/oussvmvjb",
+      "gitlab": "https://gitlab.com/oussvmvjb",
+      "linkedin": "https://www.linkedin.com/in/jabri-oussama-13b108399"
+    }
+  },
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos",
+    "skills": "Compétences",
+    "experience": "Expérience",
+    "projects": "Projets",
+    "education": "Formation",
+    "creative": "Créatif",
+    "contact": "Contact",
+    "language": "Langue",
+    "theme": "Thème"
+  },
+  "hero": {
+    "greeting": "Bonjour, je suis",
+    "name": "Jabri Oussama",
+    "role": "Développeur Web & Mobile",
+    "typedRoles": ["Développeur Web", "Développeur Mobile", "Ingénieur Full-Stack", "Créateur de Contenu"],
+    "tagline": "Je conçois des applications modernes, évolutives et soignées — de l'idée au déploiement.",
+    "status": "Étudiant en Master Informatique — Université de Technologie du Henan, Chine (2026–2029)",
+    "cta": {
+      "primary": "Voir mes projets",
+      "secondary": "Me contacter",
+      "cv": "Télécharger le CV"
+    }
+  },
+  "about": {
+    "title": "À propos de moi",
+    "paragraphs": [
+      "Je suis un étudiant passionné par le développement Web et Mobile, avec de l'expérience dans la création d'applications web et mobiles utilisant des technologies modernes.",
+      "J'aime résoudre des problèmes complexes, acquérir de nouvelles compétences et développer des solutions innovantes. À travers mes projets académiques et personnels, j'ai renforcé mes capacités techniques, analytiques et mon esprit d'équipe.",
+      "Au-delà du code, je crée du contenu numérique : montage vidéo, design graphique et production musicale. Je suis motivé à continuer d'apprendre, à contribuer à des projets à fort impact et à évoluer en tant qu'ingénieur logiciel dans un environnement international."
+    ],
+    "facts": [
+      { "label": "Localisation", "value": "Béja, Tunisie → Zhengzhou, Chine" },
+      { "label": "Études", "value": "Master en Informatique et Technologies" },
+      { "label": "Spécialisation", "value": "Web, Mobile, Full-Stack" },
+      { "label": "Langues", "value": "Arabe, Français, Anglais, Chinois" }
+    ],
+    "softSkills": ["Résolution de problèmes", "Travail d'équipe", "Apprentissage rapide", "Code propre & bonnes pratiques"]
+  },
+  "skills": {
+    "title": "Compétences",
+    "subtitle": "Technologies et outils que j'utilise au quotidien",
+    "groups": [
+      { "id": "frontend", "title": "Frontend", "items": ["React", "Next.js", "Angular", "TypeScript", "Tailwind CSS"] },
+      { "id": "backend", "title": "Backend", "items": ["Node.js", "Express.js", "NestJS", "Spring Boot", "FastAPI", "Python"] },
+      { "id": "mobile", "title": "Mobile", "items": ["React Native", "Flutter (basics)", "Kotlin"] },
+      { "id": "devops", "title": "DevOps & Outils", "items": ["Git & GitHub", "GitLab", "Docker", "Firebase", "Agile"] },
+      { "id": "design", "title": "Design & Créatif", "items": ["UI/UX basics", "Adobe Illustrator", "Adobe Premiere Pro", "CapCut Pro", "FL Studio"] }
+    ],
+    "currentGoals": {
+      "title": "En cours de perfectionnement",
+      "items": ["Next.js", "React Native", "DevOps"]
+    }
+  },
+  "experience": {
+    "title": "Expérience",
+    "subtitle": "Stages et projets professionnels",
+    "items": [
+      {
+        "id": "marketflow-pfe",
+        "role": "Projet de Fin d'Études (PFE) — MarketFlow",
+        "company": "Artificial Insight",
+        "location": "Tunisie",
+        "period": "Jan 2026 – Juin 2026",
+        "bullets": [
+          "Développement d'une plateforme de gestion d'entreprise basée sur une architecture microservices.",
+          "Conception et mise en œuvre de modules pour la gestion des utilisateurs, espaces de travail, permissions et automatisation des flux de travail.",
+          "Intégration des technologies modernes et respect des meilleures pratiques en ingénierie logicielle.",
+          "Collaboration avec Git, méthodologies Agiles et outils de développement modernes."
+        ]
+      },
+      {
+        "id": "ks-improvement",
+        "role": "Stage de Perfectionnement",
+        "company": "Kromberg & Schubert",
+        "location": "Béja, Tunisie",
+        "period": "Jan 2025 – Mars 2025",
+        "bullets": [
+          "Développement d'une application interne pour optimiser les processus de gestion de l'inventaire informatique.",
+          "Conception et intégration d'interfaces utilisateur conviviales et réactives.",
+          "Participation à la maintenance et à l'optimisation des systèmes.",
+          "Collaboration avec les équipes pour analyser les besoins et livrer des solutions adaptées."
+        ]
+      },
+      {
+        "id": "ks-initiation",
+        "role": "Stage d'Initiation",
+        "company": "Kromberg & Schubert",
+        "location": "Béja, Tunisie",
+        "period": "Jan 2024 – Mars 2024",
+        "bullets": [
+          "Observation des processus métier et de l'infrastructure informatique en milieu industriel.",
+          "Compréhension des flux de développement logiciel et du fonctionnement en entreprise.",
+          "Familiarisation avec les outils professionnels, le travail d'équipe et l'organisation de projets."
+        ]
+      },
+      {
+        "id": "enactus",
+        "role": "Responsable du Pôle Sponsoring & Marketing",
+        "company": "Enactus ISET Béja",
+        "location": "Tunisie",
+        "period": "2 ans",
+        "bullets": [
+          "Direction des activités de sponsoring et marketing pour des projets étudiants d'entrepreneuriat et d'innovation.",
+          "Soutien aux campagnes promotionnelles et aux actions de communication.",
+          "Contribution à la présentation des projets, prospection de partenariats et relations avec les sponsors.",
+          "Développement de compétences en leadership, travail d'équipe, marketing, communication et gestion de projet."
+        ]
+      }
+    ]
+  },
+  "projects": {
+    "title": "Projets",
+    "subtitle": "Sélection de réalisations issues de mon GitHub",
+    "filters": { "all": "Tous", "web": "Web", "mobile": "Mobile", "backend": "Backend", "ai": "IA" },
+    "labels": { "code": "Code source", "live": "Démo live", "featured": "En vedette" },
+    "items": [
+      {
+        "id": "frepping",
+        "title": "FREPPING",
+        "category": ["web"],
+        "featured": true,
+        "description": "Plateforme e-commerce comprenant une boutique en ligne et un tableau de bord administrateur (produits, catégories) développé en Angular.",
+        "tech": ["Angular", "TypeScript"],
+        "github": "https://github.com/oussvmvjb/frepping",
+        "live": ""
+      },
+      {
+        "id": "frepping-backend",
+        "title": "FREPPING Backend",
+        "category": ["backend"],
+        "featured": true,
+        "description": "API REST alimentant la boutique en ligne et le tableau de bord administrateur de FREPPING.",
+        "tech": ["Python", "FastAPI"],
+        "github": "https://github.com/oussvmvjb/freepping-backend",
+        "live": ""
+      },
+      {
+        "id": "stock-management",
+        "title": "Stock Management Web App",
+        "category": ["web"],
+        "featured": true,
+        "description": "Application web full-stack pour la gestion des stocks : suivi en temps réel des produits, fournisseurs, clients et ventes, avec authentification sécurisée, alertes de stock bas et tableaux de bord.",
+        "tech": ["TypeScript", "Angular"],
+        "github": "https://github.com/oussvmvjb/web-app---gestion-de-stock---stage-app",
+        "live": ""
+      },
+      {
+        "id": "marketflow",
+        "title": "MarketFlow",
+        "category": ["web", "backend"],
+        "featured": true,
+        "description": "Plateforme de gestion d'entreprise basée sur des microservices, avec gestion des utilisateurs, espaces de travail, permissions et automatisation des flux. Projet de fin d'études.",
+        "tech": ["Microservices", "Git", "Agile"],
+        "github": "",
+        "live": ""
+      },
+      {
+        "id": "virtual-medical-coaching",
+        "title": "Virtual Medical Coaching",
+        "category": ["web", "mobile", "backend"],
+        "featured": false,
+        "description": "Plateforme de coaching médical articulée autour d'un front-end web, d'une application mobile Android et d'un backend Java.",
+        "tech": ["SCSS", "Kotlin", "Java"],
+        "github": "https://github.com/oussvmvjb/virtual-medical-coaching",
+        "live": ""
+      },
+      {
+        "id": "reservation-express",
+        "title": "Reservation Express",
+        "category": ["mobile", "backend"],
+        "featured": false,
+        "description": "Application de réservation avec client mobile Flutter et API Java.",
+        "tech": ["Flutter", "Dart", "Java"],
+        "github": "https://github.com/oussvmvjb/Reservation-express",
+        "live": ""
+      },
+      {
+        "id": "signvi-ai",
+        "title": "SignVi AI",
+        "category": ["ai", "backend"],
+        "featured": false,
+        "description": "Projet d'intelligence artificielle avec modèle en Python et service FastAPI.",
+        "tech": ["Python", "FastAPI"],
+        "github": "https://github.com/oussvmvjb/SignVi-AI",
+        "live": ""
+      },
+      {
+        "id": "tikthib",
+        "title": "Tikthib Game",
+        "category": ["mobile"],
+        "featured": false,
+        "description": "Jeu mobile développé avec Flutter.",
+        "tech": ["Flutter", "Dart"],
+        "github": "https://github.com/oussvmvjb/tikthib---game-mobile-",
+        "live": ""
+      },
+      {
+        "id": "my-weather",
+        "title": "My Weather",
+        "category": ["mobile"],
+        "featured": false,
+        "description": "Application météo mobile conçue avec Flutter.",
+        "tech": ["Flutter", "Dart"],
+        "github": "https://github.com/oussvmvjb/my_weather",
+        "live": ""
+      },
+      {
+        "id": "win-na9ra",
+        "title": "Win Na9ra",
+        "category": ["web"],
+        "featured": false,
+        "description": "Projet web déployé sur Netlify.",
+        "tech": ["HTML", "CSS"],
+        "github": "https://github.com/oussvmvjb/win-na9ra",
+        "live": "https://win-na9ra.netlify.app/#/"
+      }
+    ],
+    "seeMore": "Voir tous les dépôts sur GitHub"
+  },
+  "education": {
+    "title": "Formation",
+    "items": [
+      {
+        "id": "haut",
+        "degree": "Master en Informatique et Technologies",
+        "school": "Henan University of Technology (HAUT)",
+        "location": "Zhengzhou, Chine",
+        "period": "2026 – 2029",
+        "status": "Actuellement en cours",
+        "details": [
+          "Informatique, ingénierie logicielle et technologies numériques.",
+          "Développement de compétences techniques applicables aux médias numériques, aux applications créatives et aux technologies émergentes."
+        ]
+      },
+      {
+        "id": "iset-beja",
+        "degree": "Licence en Développement des Systèmes d'Information (DSI)",
+        "school": "ISET Béja",
+        "location": "Béja, Tunisie",
+        "period": "2024 – 2026",
+        "status": "",
+        "details": ["Développement logiciel, développement web, mobile, bases de données, programmation orientée objet, réseaux."]
+      },
+      {
+        "id": "iset-medenine",
+        "degree": "Informatique (Année de transfert)",
+        "school": "Institut Supérieur des Études Technologiques (ISET Médenine)",
+        "location": "Médenine, Tunisie",
+        "period": "2023 – 2024",
+        "status": "",
+        "details": []
+      }
+    ]
+  },
+  "creative": {
+    "title": "Créations",
+    "subtitle": "Vidéo, design et musique en harmonie avec le code",
+    "intro": "Je travaille en tant que créateur de contenu numérique indépendant, accompagnant streamers et créateurs avec du montage vidéo, des visuels et du contenu pour les réseaux sociaux.",
+    "items": [
+      {
+        "id": "video",
+        "title": "Montage Vidéo",
+        "tools": ["Adobe Premiere Pro", "CapCut Pro"],
+        "points": [
+          "Création de formats courts et extraits dynamiques pour streamers et réseaux sociaux.",
+          "Transitions soignées, effets spéciaux, animation de texte, typographie et narration visuelle."
+        ]
+      },
+      {
+        "id": "graphic",
+        "title": "Design Graphique",
+        "tools": ["Adobe Illustrator"],
+        "points": [
+          "Création d'illustrations numériques et d'éléments visuels promotionnels.",
+          "Travail poussé de la typographie, de la composition et de l'identité visuelle."
+        ]
+      },
+      {
+        "id": "music",
+        "title": "Production Musicale",
+        "tools": ["FL Studio"],
+        "points": [
+          "Composition musicale et beatmaking.",
+          "Arrangement, mixage audio et création sonore originale."
+        ]
+      }
+    ]
+  },
+  "languages": {
+    "title": "Langues",
+    "items": [
+      { "name": "Arabe", "level": "Langue maternelle", "percent": 100 },
+      { "name": "Français", "level": "Intermédiaire", "percent": 65 },
+      { "name": "Anglais", "level": "B2", "percent": 70 },
+      { "name": "Chinois (Mandarin)", "level": "Débutant (en apprentissage)", "percent": 20 }
+    ]
+  },
+  "activities": {
+    "title": "Activités",
+    "items": [
+      "Membre d'Enactus ISET Béja pendant 2 ans — Responsable du Pôle Sponsoring & Marketing.",
+      "Participation active à des projets d'innovation et d'entrepreneuriat social."
+    ]
+  },
+  "contact": {
+    "title": "Prendre contact",
+    "subtitle": "Disponible pour stages, collaborations et projets freelance.",
+    "form": {
+      "name": "Votre nom",
+      "email": "Votre email",
+      "subject": "Objet",
+      "message": "Votre message",
+      "send": "Envoyer le message",
+      "sending": "Envoi en cours…",
+      "success": "Message envoyé avec succès. Merci !",
+      "error": "Une erreur s'est produite. Veuillez réessayer.",
+      "validation": {
+        "required": "Ce champ est obligatoire.",
+        "email": "Veuillez saisir un email valide."
+      }
+    },
+    "info": { "email": "Email", "phone": "Téléphone", "location": "Localisation" }
+  },
+  "footer": {
+    "rights": "Tous droits réservés.",
+    "built": "Conçu avec Next.js, TypeScript et Tailwind CSS.",
+    "backToTop": "Retour en haut"
+  },
+  "theme": {
+    "open": "Personnaliser le thème",
+    "title": "Personnalisation",
+    "subtitle": "Aperçu & ajustements en direct",
+    "theming": "Thème",
+    "sections": "Sections",
+    "primary": "Couleur principale",
+    "mode": "Mode",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système",
+    "reset": "Réinitialiser",
+    "close": "Fermer"
+  },
+  "notFound": {
+    "title": "OUPS !",
+    "subtitle": "404 – PAGE INTROUVABLE",
+    "description": "La page que vous recherchez a peut-être été supprimée, renommée ou est temporairement indisponible.",
+    "cta": "Retour à l'accueil"
+  }
+}

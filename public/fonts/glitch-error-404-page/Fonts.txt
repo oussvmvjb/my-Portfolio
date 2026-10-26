@@ -1,0 +1,9 @@
+Fonts used in this design:
+
+Font: Gilroy
+Author: Radomir Tinkov
+Url: https://www.fontsquirrel.com/fonts/gilroy
+
+Font: Antipasto
+Author: Zetafonts
+Url: https://www.fontsquirrel.com/fonts/antipasto

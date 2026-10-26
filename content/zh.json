@@ -1,0 +1,370 @@
+{
+  "meta": {
+    "locale": "zh",
+    "dir": "ltr",
+    "title": "Jabri Oussama — Web 与移动端开发工程师",
+    "description": "Jabri Oussama 的个人作品集：Web 与移动端开发工程师，河南工业大学计算机科学与技术硕士研究生，数字媒体内容创作者。"
+  },
+  "person": {
+    "name": "Jabri Oussama",
+    "role": "Web 与移动端开发工程师",
+    "email": "oussamajb24@gmail.com",
+    "phones": ["+216 29 530 920", "+86 195 1554 4574"],
+    "location": "突尼斯巴杰 / 中国郑州",
+    "socials": {
+      "github": "https://github.com/oussvmvjb",
+      "gitlab": "https://gitlab.com/oussvmvjb",
+      "linkedin": "https://www.linkedin.com/in/jabri-oussama-13b108399"
+    }
+  },
+  "nav": {
+    "home": "首页",
+    "about": "关于我",
+    "skills": "技能",
+    "experience": "经历",
+    "projects": "项目",
+    "education": "教育",
+    "creative": "创意",
+    "contact": "联系",
+    "language": "语言",
+    "theme": "主题"
+  },
+  "hero": {
+    "greeting": "你好，我是",
+    "name": "Jabri Oussama",
+    "role": "Web 与移动端开发工程师",
+    "typedRoles": ["Web 前端工程师", "移动端开发工程师", "全栈工程师", "数字内容创作者"],
+    "tagline": "我致力于构建现代化、高扩展性与优雅整洁的应用程序 — 从构思到上线部署。",
+    "status": "计算机科学与技术硕士在读 — 河南工业大学，中国（2026–2029）",
+    "cta": {
+      "primary": "浏览我的项目",
+      "secondary": "联系我",
+      "cv": "下载个人简历"
+    }
+  },
+  "about": {
+    "title": "关于我",
+    "paragraphs": [
+      "我是一名对 Web 与移动端开发充满热情的学生，具备运用现代技术构建高质量全栈应用的丰富经验。",
+      "我热衷于解决复杂问题、学习前沿技术并探索创新解决方案。在学术与个人项目中，我不断夯实自身的技术能力、分析思维与跨文化团队协作素养。",
+      "在编程之外，我也积极从事数字内容创作：视频剪辑、视觉设计与音乐制作。我始终保持对技术的好奇心，期待在国际化视野中参与富有影响力的项目，成长为优秀的软件工程师。"
+    ],
+    "facts": [
+      { "label": "所在地", "value": "突尼斯巴杰 → 中国郑州" },
+      { "label": "专业方向", "value": "计算机科学与技术硕士" },
+      { "label": "核心技术", "value": "Web, Mobile, Full-Stack" },
+      { "label": "语言能力", "value": "阿拉伯语、法语、英语、中文" }
+    ],
+    "softSkills": ["问题解决能力", "团队协同合作", "快速学习能力", "整洁代码与工程规范"]
+  },
+  "skills": {
+    "title": "专业技能",
+    "subtitle": "日常开发所使用的技术栈与开发工具",
+    "groups": [
+      { "id": "frontend", "title": "前端开发", "items": ["React", "Next.js", "Angular", "TypeScript", "Tailwind CSS"] },
+      { "id": "backend", "title": "后端开发", "items": ["Node.js", "Express.js", "NestJS", "Spring Boot", "FastAPI", "Python"] },
+      { "id": "mobile", "title": "移动端开发", "items": ["React Native", "Flutter (basics)", "Kotlin"] },
+      { "id": "devops", "title": "DevOps 与工具", "items": ["Git & GitHub", "GitLab", "Docker", "Firebase", "Agile"] },
+      { "id": "design", "title": "设计与创意", "items": ["UI/UX basics", "Adobe Illustrator", "Adobe Premiere Pro", "CapCut Pro", "FL Studio"] }
+    ],
+    "currentGoals": {
+      "title": "当前正在深入学习",
+      "items": ["Next.js", "React Native", "DevOps"]
+    }
+  },
+  "experience": {
+    "title": "实践经历",
+    "subtitle": "企业实习与专业工程项目",
+    "items": [
+      {
+        "id": "marketflow-pfe",
+        "role": "毕业设计项目 (PFE) — MarketFlow",
+        "company": "Artificial Insight",
+        "location": "突尼斯",
+        "period": "2026年1月 – 2026年6月",
+        "bullets": [
+          "基于微服务架构（Microservices）开发的企业综合业务管理平台。",
+          "设计并实现用户权限、工作空间协同、多角色管理与工作流自动化等核心模块。",
+          "集成前沿技术栈并严格遵循现代软件工程与架构规范。",
+          "基于 Git 工作流、敏捷开发（Agile）及现代协同工具开展跨职能开发。"
+        ]
+      },
+      {
+        "id": "ks-improvement",
+        "role": "进阶研发实习生",
+        "company": "Kromberg & Schubert",
+        "location": "突尼斯巴杰",
+        "period": "2025年1月 – 2025年3月",
+        "bullets": [
+          "主导开发内部管理系统，极大提升企业 IT 设备与资产盘点效率。",
+          "设计并落地直观友好、响应迅速的用户界面交互体验。",
+          "参与生产系统的日常运维排查与性能调优。",
+          "协同跨部门业务人员进行需求分析与落地验证，交付高实用性方案。"
+        ]
+      },
+      {
+        "id": "ks-initiation",
+        "role": "认识实习生",
+        "company": "Kromberg & Schubert",
+        "location": "突尼斯巴杰",
+        "period": "2024年1月 – 2024年3月",
+        "bullets": [
+          "深入了解工业制造环境下的企业业务流程与 IT 基础架构设计。",
+          "系统学习企业级软件工程研发流程与运维组织协同机制。",
+          "熟练掌握工业级协同开发工具、团队沟通技巧与项目管理标准。"
+        ]
+      },
+      {
+        "id": "enactus",
+        "role": "赞助与市场拓展部负责人",
+        "company": "Enactus ISET Béja",
+        "location": "突尼斯",
+        "period": "2年",
+        "bullets": [
+          "负责高校创新创业项目的对外商务赞助与品牌市场拓展工作。",
+          "主导线上宣传推广与多渠道公关传播方案的设计实施。",
+          "参与商业企划路演展示、战略合作伙伴洽谈及赞助商日常维护。",
+          "全面提升了领导力、跨部门协作、商务公关与复杂活动执行把控能力。"
+        ]
+      }
+    ]
+  },
+  "projects": {
+    "title": "精选项目",
+    "subtitle": "来自我 GitHub 仓库的开源项目成果",
+    "filters": { "all": "全部", "web": "Web", "mobile": "移动端", "backend": "后端", "ai": "人工智能" },
+    "labels": { "code": "源代码", "live": "在线演示", "featured": "重点推荐" },
+    "items": [
+      {
+        "id": "frepping",
+        "title": "FREPPING",
+        "category": ["web"],
+        "featured": true,
+        "description": "基于 Angular 构建的全功能电商平台，包含现代客户端商城与完善的管理后台（商品与分类管理）。",
+        "tech": ["Angular", "TypeScript"],
+        "github": "https://github.com/oussvmvjb/frepping",
+        "live": ""
+      },
+      {
+        "id": "frepping-backend",
+        "title": "FREPPING Backend",
+        "category": ["backend"],
+        "featured": true,
+        "description": "为 FREPPING 电商客户端及管理中台提供高性能支持的 RESTful API 服务。",
+        "tech": ["Python", "FastAPI"],
+        "github": "https://github.com/oussvmvjb/freepping-backend",
+        "live": ""
+      },
+      {
+        "id": "stock-management",
+        "title": "Stock Management Web App",
+        "category": ["web"],
+        "featured": true,
+        "description": "全栈库存管理 Web 系统：实时追踪产品进销存、供应商、客户与订单数据，集成安全身份鉴权、低库存预警与数据分析面板。",
+        "tech": ["TypeScript", "Angular"],
+        "github": "https://github.com/oussvmvjb/web-app---gestion-de-stock---stage-app",
+        "live": ""
+      },
+      {
+        "id": "marketflow",
+        "title": "MarketFlow",
+        "category": ["web", "backend"],
+        "featured": true,
+        "description": "基于微服务架构打造的企业业务管理中台，涵盖多工作空间协作、角色权限及业务自动化流程。我的毕业设计代表作。",
+        "tech": ["Microservices", "Git", "Agile"],
+        "github": "",
+        "live": ""
+      },
+      {
+        "id": "virtual-medical-coaching",
+        "title": "Virtual Medical Coaching",
+        "category": ["web", "mobile", "backend"],
+        "featured": false,
+        "description": "智慧医疗健康指导系统，包含响应式 Web 端界面、Android 原生移动端应用与高性能 Java 后端支持。",
+        "tech": ["SCSS", "Kotlin", "Java"],
+        "github": "https://github.com/oussvmvjb/virtual-medical-coaching",
+        "live": ""
+      },
+      {
+        "id": "reservation-express",
+        "title": "Reservation Express",
+        "category": ["mobile", "backend"],
+        "featured": false,
+        "description": "多端快速预约挂号系统，集成跨平台 Flutter 移动客户端与 Java 业务接口。",
+        "tech": ["Flutter", "Dart", "Java"],
+        "github": "https://github.com/oussvmvjb/Reservation-express",
+        "live": ""
+      },
+      {
+        "id": "signvi-ai",
+        "title": "SignVi AI",
+        "category": ["ai", "backend"],
+        "featured": false,
+        "description": "人工智能视觉识别应用，采用 Python 深度学习模型并借助 FastAPI 进行高性能服务封装。",
+        "tech": ["Python", "FastAPI"],
+        "github": "https://github.com/oussvmvjb/SignVi-AI",
+        "live": ""
+      },
+      {
+        "id": "tikthib",
+        "title": "Tikthib Game",
+        "category": ["mobile"],
+        "featured": false,
+        "description": "基于 Flutter 开发的跨平台益智互动移动端小游戏。",
+        "tech": ["Flutter", "Dart"],
+        "github": "https://github.com/oussvmvjb/tikthib---game-mobile-",
+        "live": ""
+      },
+      {
+        "id": "my-weather",
+        "title": "My Weather",
+        "category": ["mobile"],
+        "featured": false,
+        "description": "界面优雅、支持多地天气的跨平台移动端应用，基于 Flutter 开发。",
+        "tech": ["Flutter", "Dart"],
+        "github": "https://github.com/oussvmvjb/my_weather",
+        "live": ""
+      },
+      {
+        "id": "win-na9ra",
+        "title": "Win Na9ra",
+        "category": ["web"],
+        "featured": false,
+        "description": "部署在 Netlify 平台的交互式教育导航 Web 项目。",
+        "tech": ["HTML", "CSS"],
+        "github": "https://github.com/oussvmvjb/win-na9ra",
+        "live": "https://win-na9ra.netlify.app/#/"
+      }
+    ],
+    "seeMore": "前往 GitHub 探索更多开源项目"
+  },
+  "education": {
+    "title": "教育背景",
+    "items": [
+      {
+        "id": "haut",
+        "degree": "计算机科学与技术学术型硕士",
+        "school": "Henan University of Technology (HAUT)",
+        "location": "中国郑州",
+        "period": "2026 – 2029",
+        "status": "在读研究生",
+        "details": [
+          "计算机科学、软件工程、高并发架构与前沿数字技术深度研究。",
+          "系统培养面向数字媒体、创意交互应用与新兴智能技术的前沿研发能力。"
+        ]
+      },
+      {
+        "id": "iset-beja",
+        "degree": "信息系统开发专业学士 (DSI)",
+        "school": "ISET Béja",
+        "location": "突尼斯巴杰",
+        "period": "2024 – 2026",
+        "status": "",
+        "details": ["软件工程开发、Web 与移动端全栈编程、数据库原理与应用、面向对象程序设计、计算机网络。"]
+      },
+      {
+        "id": "iset-medenine",
+        "degree": "计算机科学（转学学年）",
+        "school": "麦德宁高等技术研究院 (ISET Médenine)",
+        "location": "突尼斯麦德宁",
+        "period": "2023 – 2024",
+        "status": "",
+        "details": []
+      }
+    ]
+  },
+  "creative": {
+    "title": "数字创意制作",
+    "subtitle": "融合代码技术与视频剪辑、视觉设计、音频制作的多元表达",
+    "intro": "作为自由数字内容创作者，我长期为海外主播与独立创作者提供专业短视频剪辑、视觉包装与多平台社交媒体内容策划。",
+    "items": [
+      {
+        "id": "video",
+        "title": "专业视频剪辑与后期",
+        "tools": ["Adobe Premiere Pro", "CapCut Pro"],
+        "points": [
+          "精细化短视频与高燃切片制作，专为社交媒体与直播平台量身定制。",
+          "熟练把控转场节奏、视觉动效、字幕排版与动态视听叙事语言。"
+        ]
+      },
+      {
+        "id": "graphic",
+        "title": "平面与视觉设计",
+        "tools": ["Adobe Illustrator"],
+        "points": [
+          "品牌宣发物料设计、个性化数字插画与封面视觉设计。",
+          "深入研究排版构成、色彩美学与品牌统一视觉识别体系。"
+        ]
+      },
+      {
+        "id": "music",
+        "title": "编曲与音频工程制作",
+        "tools": ["FL Studio"],
+        "points": [
+          "节奏编配（Beat-making）与多风格背景音乐原创构思。",
+          "音频轨道混音调音、创意音效制作与多声道处理。"
+        ]
+      }
+    ]
+  },
+  "languages": {
+    "title": "语言能力",
+    "items": [
+      { "name": "阿拉伯语", "level": "母语", "percent": 100 },
+      { "name": "法语", "level": "流利进阶", "percent": 65 },
+      { "name": "英语", "level": "B2 商务工作水平", "percent": 70 },
+      { "name": "中文（普通话）", "level": "初学进阶中", "percent": 20 }
+    ]
+  },
+  "activities": {
+    "title": "社会实践与活动",
+    "items": [
+      "担任 Enactus ISET Béja 成员两年 — 担任赞助与市场拓展部负责人。",
+      "多次作为核心成员参与青年创新创业与公益孵化项目大赛。"
+    ]
+  },
+  "contact": {
+    "title": "联系交流",
+    "subtitle": "诚挚寻求全职/实习研发机会、技术合作及自由职业项目。",
+    "form": {
+      "name": "您的姓名",
+      "email": "电子邮箱",
+      "subject": "主题",
+      "message": "留言内容",
+      "send": "发送留言",
+      "sending": "正在发送…",
+      "success": "留言已成功发送，感谢您的来信！",
+      "error": "发送过程中出现错误，请稍后重试。",
+      "validation": {
+        "required": "此项为必填项。",
+        "email": "请输入有效的电子邮箱地址。"
+      }
+    },
+    "info": { "email": "电子邮箱", "phone": "联系电话", "location": "所在地" }
+  },
+  "footer": {
+    "rights": "版权所有 保留一切权利。",
+    "built": "基于 Next.js、TypeScript 与 Tailwind CSS 匠心构建。",
+    "backToTop": "回到顶部"
+  },
+  "theme": {
+    "open": "定制个性化主题",
+    "title": "主题实时定制器",
+    "subtitle": "所见即所得，实时个性化预览",
+    "theming": "主题样式",
+    "sections": "版块编排",
+    "primary": "主色调",
+    "mode": "色彩模式",
+    "light": "浅色明亮",
+    "dark": "深色极客",
+    "system": "跟随系统",
+    "reset": "恢复默认",
+    "close": "关闭面板"
+  },
+  "notFound": {
+    "title": "哎呀！",
+    "subtitle": "404 – 页面未找到",
+    "description": "抱歉，您访问的页面可能已被移除、重命名或暂时无法访问。",
+    "cta": "返回主页"
+  }
+}

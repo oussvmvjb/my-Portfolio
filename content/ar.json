@@ -1,0 +1,370 @@
+{
+  "meta": {
+    "locale": "ar",
+    "dir": "rtl",
+    "title": "Jabri Oussama — مطور ويب وتطبيقات الجوال",
+    "description": "المعرض الشخصي لـ Jabri Oussama: مطور ويب وتطبيقات الجوال، طالب ماجستير علوم الحاسوب في جامعة خنان للتكنولوجيا، وصانع محتوى رقمي."
+  },
+  "person": {
+    "name": "Jabri Oussama",
+    "role": "مطور ويب وتطبيقات الجوال",
+    "email": "oussamajb24@gmail.com",
+    "phones": ["+216 29 530 920", "+86 195 1554 4574"],
+    "location": "باجة، تونس / تشنغتشو، الصين",
+    "socials": {
+      "github": "https://github.com/oussvmvjb",
+      "gitlab": "https://gitlab.com/oussvmvjb",
+      "linkedin": "https://www.linkedin.com/in/jabri-oussama-13b108399"
+    }
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "about": "نبذة عني",
+    "skills": "المهارات",
+    "experience": "الخبرات",
+    "projects": "المشاريع",
+    "education": "التعليم",
+    "creative": "الإبداع",
+    "contact": "تواصل معي",
+    "language": "اللغة",
+    "theme": "المظهر"
+  },
+  "hero": {
+    "greeting": "مرحباً، أنا",
+    "name": "Jabri Oussama",
+    "role": "مطور ويب وتطبيقات الجوال",
+    "typedRoles": ["مطور ويب", "مطور تطبيقات الجوال", "مهندس Full-Stack", "صانع محتوى"],
+    "tagline": "أبني تطبيقات عصرية، قابلة للتوسع وأنيقة — من الفكرة حتى الإطلاق.",
+    "status": "طالب ماجستير في علوم وتكنولوجيا الحاسوب — Henan University of Technology، الصين (2026–2029)",
+    "cta": {
+      "primary": "استعرض مشاريعي",
+      "secondary": "تواصل معي",
+      "cv": "تحميل السيرة الذاتية"
+    }
+  },
+  "about": {
+    "title": "نبذة عني",
+    "paragraphs": [
+      "أنا طالب شغوف بتطوير الويب وتطبيقات الجوال، ولدي خبرة في بناء حلول رقمية وتطبيقات متكاملة باستخدام أحدث التقنيات.",
+      "أستمتع بحل المشكلات المعقدة، واكتساب مهارات جديدة، وتطوير أفكار مبتكرة. من خلال مشاريعي الأكاديمية والشخصية، عززت قدراتي التقنية والتحليلية ومهارات العمل الجماعي.",
+      "إلى جانب البرمجة، أعمل في صناعة المحتوى الرقمي: تحرير الفيديو، التصميم الجرافيكي والإنتاج الموسيقي. يملؤني الحماس لمواصلة التعلّم والمساهمة في مشاريع ذات أثر حقيقي والنمو كمهندس برمجيات في بيئة دولية."
+    ],
+    "facts": [
+      { "label": "الموقع الحالي", "value": "باجة، تونس ← تشنغتشو، الصين" },
+      { "label": "المجال الأكاديمي", "value": "ماجستير علوم وتكنولوجيا الحاسوب" },
+      { "label": "التركيز", "value": "Web, Mobile, Full-Stack" },
+      { "label": "اللغات", "value": "العربية، الفرنسية، الإنجليزية، الصينية" }
+    ],
+    "softSkills": ["حل المشكلات", "العمل الجماعي", "سرعة التعلم والتكيف", "كتابة كود نظيف وتطبيق أفضل الممارسات"]
+  },
+  "skills": {
+    "title": "المهارات",
+    "subtitle": "التقنيات والأدوات التي أعمل بها",
+    "groups": [
+      { "id": "frontend", "title": "Frontend", "items": ["React", "Next.js", "Angular", "TypeScript", "Tailwind CSS"] },
+      { "id": "backend", "title": "Backend", "items": ["Node.js", "Express.js", "NestJS", "Spring Boot", "FastAPI", "Python"] },
+      { "id": "mobile", "title": "Mobile", "items": ["React Native", "Flutter (basics)", "Kotlin"] },
+      { "id": "devops", "title": "DevOps & Tools", "items": ["Git & GitHub", "GitLab", "Docker", "Firebase", "Agile"] },
+      { "id": "design", "title": "Design & Creative", "items": ["UI/UX basics", "Adobe Illustrator", "Adobe Premiere Pro", "CapCut Pro", "FL Studio"] }
+    ],
+    "currentGoals": {
+      "title": "أعمل على تطويرها حالياً",
+      "items": ["Next.js", "React Native", "DevOps"]
+    }
+  },
+  "experience": {
+    "title": "الخبرات والتدريب",
+    "subtitle": "فترات التدريب والمشاريع المهنية",
+    "items": [
+      {
+        "id": "marketflow-pfe",
+        "role": "مشروع تخرج نهاية الدراسات (PFE) — MarketFlow",
+        "company": "Artificial Insight",
+        "location": "تونس",
+        "period": "يناير 2026 – يونيو 2026",
+        "bullets": [
+          "تطوير منصة إدارة أعمال متكاملة بالاعتماد على بنية الخدمات المصغرة (Microservices).",
+          "تصميم وتنفيذ وحدات إدارة المستخدمين، مساحات العمل، الصلاحيات وأتمتة مسارات العمل.",
+          "دمج أحدث التقنيات البرمجية والالتزام بأفضل ممارسات هندسة البرمجيات.",
+          "التعاون الجماعي عبر Git ومنهجيات Agile وأدوات التطوير الحديثة."
+        ]
+      },
+      {
+        "id": "ks-improvement",
+        "role": "تدريب تطويري ومهني",
+        "company": "Kromberg & Schubert",
+        "location": "باجة، تونس",
+        "period": "يناير 2025 – مارس 2025",
+        "bullets": [
+          "تطوير تطبيق داخلي لتحسين عمليات إدارة جرد الأجهزة وتقنية المعلومات.",
+          "تصميم وبناء واجهات مستخدم تفاعلية وسلسة.",
+          "المشاركة في صيانة الأنظمة ورفع كفاءتها التشغيلية.",
+          "التنسيق مع فرق العمل لتحليل المتطلبات وتقديم حلول عملية فعالة."
+        ]
+      },
+      {
+        "id": "ks-initiation",
+        "role": "تدريب استطلاعي وتأسيسي",
+        "company": "Kromberg & Schubert",
+        "location": "باجة، تونس",
+        "period": "يناير 2024 – مارس 2024",
+        "bullets": [
+          "الاطلاع على مسارات العمل والبنية التحتية لتكنولوجيا المعلومات في بيئة صناعية.",
+          "اكتساب رؤية متعمقة حول دورة حياة تطوير البرمجيات وإدارة المؤسسات.",
+          "التعرف على الأدوات المهنية وممارسات العمل الجماعي وتنظيم المشاريع."
+        ]
+      },
+      {
+        "id": "enactus",
+        "role": "مسؤول مكتب الرعاية والتسويق",
+        "company": "Enactus ISET Béja",
+        "location": "تونس",
+        "period": "سنتان",
+        "bullets": [
+          "قيادة أنشطة الرعاية والتسويق لمشاريع ريادة الأعمال الطلابية والابتكار.",
+          "دعم الحملات الترويجية وأنشطة التواصل والإعلام.",
+          "المساهمة في تقديم المشاريع والتواصل مع الشركاء واستقطاب الرعاة.",
+          "تطوير مهارات القيادة، والعمل الجماعي، والتسويق، والتواصل، وإدارة الفعاليات والمشاريع."
+        ]
+      }
+    ]
+  },
+  "projects": {
+    "title": "المشاريع",
+    "subtitle": "مختارات من أعمالي على GitHub",
+    "filters": { "all": "الكل", "web": "ويب", "mobile": "جوال", "backend": "خلفية", "ai": "ذكاء اصطناعي" },
+    "labels": { "code": "الكود المصدري", "live": "معاينة مباشرة", "featured": "مميز" },
+    "items": [
+      {
+        "id": "frepping",
+        "title": "FREPPING",
+        "category": ["web"],
+        "featured": true,
+        "description": "منصة تجارة إلكترونية متكاملة تتضمن واجهة متجر ولوحة تحكم للمسؤول (المنتجات، الفئات) مبنية بواسطة Angular.",
+        "tech": ["Angular", "TypeScript"],
+        "github": "https://github.com/oussvmvjb/frepping",
+        "live": ""
+      },
+      {
+        "id": "frepping-backend",
+        "title": "FREPPING Backend",
+        "category": ["backend"],
+        "featured": true,
+        "description": "واجهة برمجة تطبيقات REST API تدعم متجر ولوحة تحكم منصة FREPPING.",
+        "tech": ["Python", "FastAPI"],
+        "github": "https://github.com/oussvmvjb/freepping-backend",
+        "live": ""
+      },
+      {
+        "id": "stock-management",
+        "title": "Stock Management Web App",
+        "category": ["web"],
+        "featured": true,
+        "description": "تطبيق ويب متكامل لإدارة المخزون: متابعة فورية للمنتجات والموردين والعملاء والمبيعات، مع مصادقة آمنة وتنبيهات بنفاد المخزون ولوحات إحصائية.",
+        "tech": ["TypeScript", "Angular"],
+        "github": "https://github.com/oussvmvjb/web-app---gestion-de-stock---stage-app",
+        "live": ""
+      },
+      {
+        "id": "marketflow",
+        "title": "MarketFlow",
+        "category": ["web", "backend"],
+        "featured": true,
+        "description": "منصة لإدارة الأعمال مبنية على هيكلية الخدمات المصغرة، تشمل إدارة المستخدمين، مساحات العمل، الصلاحيات وأتمتة العمليات. مشروع تخرجي.",
+        "tech": ["Microservices", "Git", "Agile"],
+        "github": "",
+        "live": ""
+      },
+      {
+        "id": "virtual-medical-coaching",
+        "title": "Virtual Medical Coaching",
+        "category": ["web", "mobile", "backend"],
+        "featured": false,
+        "description": "منصة إرشاد وتدريب طبي مقسمة إلى واجهة ويب، وتطبيق جوال بنظام Android، وخلفية برمجية بلغة Java.",
+        "tech": ["SCSS", "Kotlin", "Java"],
+        "github": "https://github.com/oussvmvjb/virtual-medical-coaching",
+        "live": ""
+      },
+      {
+        "id": "reservation-express",
+        "title": "Reservation Express",
+        "category": ["mobile", "backend"],
+        "featured": false,
+        "description": "تطبيق حجوزات وسفريات يتضمن تطبيق هاتف بتقنية Flutter وواجهة برمجة بلغة Java.",
+        "tech": ["Flutter", "Dart", "Java"],
+        "github": "https://github.com/oussvmvjb/Reservation-express",
+        "live": ""
+      },
+      {
+        "id": "signvi-ai",
+        "title": "SignVi AI",
+        "category": ["ai", "backend"],
+        "featured": false,
+        "description": "مشروع ذكاء اصطناعي يعتمد على نموذج Python وخدمة سريعة بـ FastAPI.",
+        "tech": ["Python", "FastAPI"],
+        "github": "https://github.com/oussvmvjb/SignVi-AI",
+        "live": ""
+      },
+      {
+        "id": "tikthib",
+        "title": "Tikthib Game",
+        "category": ["mobile"],
+        "featured": false,
+        "description": "لعبة تفاعلية للهواتف الذكية مطورة باستخدام Flutter.",
+        "tech": ["Flutter", "Dart"],
+        "github": "https://github.com/oussvmvjb/tikthib---game-mobile-",
+        "live": ""
+      },
+      {
+        "id": "my-weather",
+        "title": "My Weather",
+        "category": ["mobile"],
+        "featured": false,
+        "description": "تطبيق طقس للهواتف الجوالة مبني باستخدام Flutter.",
+        "tech": ["Flutter", "Dart"],
+        "github": "https://github.com/oussvmvjb/my_weather",
+        "live": ""
+      },
+      {
+        "id": "win-na9ra",
+        "title": "Win Na9ra",
+        "category": ["web"],
+        "featured": false,
+        "description": "مشروع ويب تم نشره على منصة Netlify.",
+        "tech": ["HTML", "CSS"],
+        "github": "https://github.com/oussvmvjb/win-na9ra",
+        "live": "https://win-na9ra.netlify.app/#/"
+      }
+    ],
+    "seeMore": "استكشف كافة المستودعات على GitHub"
+  },
+  "education": {
+    "title": "التعليم والمؤهلات",
+    "items": [
+      {
+        "id": "haut",
+        "degree": "ماجستير في علوم وتكنولوجيا الحاسوب",
+        "school": "Henan University of Technology (HAUT)",
+        "location": "تشنغتشو، الصين",
+        "period": "2026 – 2029",
+        "status": "قيد الدراسة حالياً",
+        "details": [
+          "علوم الحاسوب، هندسة البرمجيات، والتقنيات الرقمية المتقدمة.",
+          "تطوير المعارف التقنية المرتبطة بالوسائط الرقمية، التطبيقات الإبداعية والتقنيات الناشئة."
+        ]
+      },
+      {
+        "id": "iset-beja",
+        "degree": "إجازة وطنية في تطوير النظم المعلوماتية (DSI)",
+        "school": "ISET Béja",
+        "location": "باجة، تونس",
+        "period": "2024 – 2026",
+        "status": "",
+        "details": ["تطوير البرمجيات، تطوير الويب والجوال، قواعد البيانات، البرمجة كائنية التوجه، والشبكات."]
+      },
+      {
+        "id": "iset-medenine",
+        "degree": "علوم الحاسوب (سنة تحويل)",
+        "school": "المعهد العالي للدراسات التكنولوجية بمدنين (ISET Médenine)",
+        "location": "مدنين، تونس",
+        "period": "2023 – 2024",
+        "status": "",
+        "details": []
+      }
+    ]
+  },
+  "creative": {
+    "title": "الإنتاج الإبداعي",
+    "subtitle": "صناعة الفيديو، التصميم الجرافيكي والموسيقى إلى جانب البرمجة",
+    "intro": "أعمل كصانع محتوى رقمي مستقل، حيث أقدم الدعم للبث المباشر وصناع المحتوى من خلال مقاطع الفيديو، التصاميم والمحتوى التفاعلي لمنصات التواصل الاجتماعي.",
+    "items": [
+      {
+        "id": "video",
+        "title": "تحرير ومونتاج الفيديو",
+        "tools": ["Adobe Premiere Pro", "CapCut Pro"],
+        "points": [
+          "إنتاج محتوى الفيديو القصير وتعديل لقطات البث لصناع المحتوى.",
+          "انتقالات حركية متقنة، مؤثرات بصرية، تحريك النصوص وسرد بصري جذاب."
+        ]
+      },
+      {
+        "id": "graphic",
+        "title": "التصميم الجرافيكي",
+        "tools": ["Adobe Illustrator"],
+        "points": [
+          "تصميم رسومات رقمية ومواد بصرية ترويجية.",
+          "إتقان الطباعة الرقمية والتايبوغرافي وتنسيق الهويات البصرية."
+        ]
+      },
+      {
+        "id": "music",
+        "title": "الإنتاج والتأليف الموسيقي",
+        "tools": ["FL Studio"],
+        "points": [
+          "تأليف الإيقاعات والموسيقى التصويرية.",
+          "التوزيع الصوتي، المونتاج الصوتي والإنتاج الإبداعي."
+        ]
+      }
+    ]
+  },
+  "languages": {
+    "title": "اللغات",
+    "items": [
+      { "name": "العربية", "level": "اللغة الأم", "percent": 100 },
+      { "name": "الفرنسية", "level": "متوسط", "percent": 65 },
+      { "name": "الإنجليزية", "level": "B2", "percent": 70 },
+      { "name": "الصينية (الماندرين)", "level": "مبتدئ (قيد التعلّم)", "percent": 20 }
+    ]
+  },
+  "activities": {
+    "title": "الأنشطة والاهتمامات",
+    "items": [
+      "عضو في Enactus ISET Béja لمدة عامين — مسؤول مكتب الرعاية والتسويق.",
+      "مشارك نشط في مشاريع الابتكار وريادة الأعمال."
+    ]
+  },
+  "contact": {
+    "title": "تواصل معي",
+    "subtitle": "متاح لفرص التدريب، التعاون والمشاريع المستقلة.",
+    "form": {
+      "name": "اسمك الكامل",
+      "email": "بريدك الإلكتروني",
+      "subject": "الموضوع",
+      "message": "رسالتك",
+      "send": "إرسال الرسالة",
+      "sending": "جاري الإرسال…",
+      "success": "تم إرسال رسالتك بنجاح. شكراً لك!",
+      "error": "حدث خطأ ما. يُرجى المحاولة مرة أخرى.",
+      "validation": {
+        "required": "هذا الحقل مطلوب.",
+        "email": "يُرجى إدخال بريد إلكتروني صالح."
+      }
+    },
+    "info": { "email": "البريد الإلكتروني", "phone": "الهاتف", "location": "الموقع" }
+  },
+  "footer": {
+    "rights": "جميع الحقوق محفوظة.",
+    "built": "تم التطوير بواسطة Next.js وTypeScript وTailwind CSS.",
+    "backToTop": "العودة إلى الأعلى"
+  },
+  "theme": {
+    "open": "تخصيص المظهر",
+    "title": "مخصص المظهر",
+    "subtitle": "تخصيص ومعاينة فورية في الوقت الحقيقي",
+    "theming": "الألوان والنمط",
+    "sections": "الأقسام والتصميم",
+    "primary": "اللون الأساسي",
+    "mode": "الوضع",
+    "light": "فاتح",
+    "dark": "داكن",
+    "system": "النظام",
+    "reset": "إعادة ضبط",
+    "close": "إغلاق"
+  },
+  "notFound": {
+    "title": "عذراً!",
+    "subtitle": "404 – الصفحة غير موجودة",
+    "description": "قد تكون الصفحة التي تبحث عنها قد تم نقلها أو حذفها أو أنها غير متوفرة حالياً.",
+    "cta": "العودة إلى الصفحة الرئيسية"
+  }
+}

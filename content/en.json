@@ -1,0 +1,370 @@
+{
+  "meta": {
+    "locale": "en",
+    "dir": "ltr",
+    "title": "Jabri Oussama — Web & Mobile Developer",
+    "description": "Portfolio of Jabri Oussama: web & mobile developer, Computer Science master's student at Henan University of Technology, and digital content creator."
+  },
+  "person": {
+    "name": "Jabri Oussama",
+    "role": "Web & Mobile Developer",
+    "email": "oussamajb24@gmail.com",
+    "phones": ["+216 29 530 920", "+86 195 1554 4574"],
+    "location": "Béja, Tunisia / Zhengzhou, China",
+    "socials": {
+      "github": "https://github.com/oussvmvjb",
+      "gitlab": "https://gitlab.com/oussvmvjb",
+      "linkedin": "https://www.linkedin.com/in/jabri-oussama-13b108399"
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "skills": "Skills",
+    "experience": "Experience",
+    "projects": "Projects",
+    "education": "Education",
+    "creative": "Creative",
+    "contact": "Contact",
+    "language": "Language",
+    "theme": "Theme"
+  },
+  "hero": {
+    "greeting": "Hi, I'm",
+    "name": "Jabri Oussama",
+    "role": "Web & Mobile Developer",
+    "typedRoles": ["Web Developer", "Mobile Developer", "Full-Stack Engineer", "Content Creator"],
+    "tagline": "I build modern, scalable and clean applications — from idea to deployment.",
+    "status": "Master's student in Computer Science — Henan University of Technology, China (2026–2029)",
+    "cta": {
+      "primary": "View my projects",
+      "secondary": "Contact me",
+      "cv": "Download CV"
+    }
+  },
+  "about": {
+    "title": "About me",
+    "paragraphs": [
+      "I am a passionate Web and Mobile Development student with experience in building web and mobile applications using modern technologies.",
+      "I enjoy solving problems, learning new skills, and developing innovative solutions. Through academic and personal projects, I have strengthened my technical, analytical, and teamwork abilities.",
+      "Beyond code, I create digital content: video editing, graphic design and music production. I am motivated to keep learning, contribute to impactful projects, and grow as a software engineer in an international environment."
+    ],
+    "facts": [
+      { "label": "Based in", "value": "Béja, Tunisia → Zhengzhou, China" },
+      { "label": "Studying", "value": "M.Sc. Computer Science and Technology" },
+      { "label": "Focus", "value": "Web, Mobile, Full-Stack" },
+      { "label": "Languages", "value": "Arabic, French, English, Chinese" }
+    ],
+    "softSkills": ["Problem solving", "Team collaboration", "Fast learning", "Clean code & best practices"]
+  },
+  "skills": {
+    "title": "Skills",
+    "subtitle": "Technologies and tools I work with",
+    "groups": [
+      { "id": "frontend", "title": "Frontend", "items": ["React", "Next.js", "Angular", "TypeScript", "Tailwind CSS"] },
+      { "id": "backend", "title": "Backend", "items": ["Node.js", "Express.js", "NestJS", "Spring Boot", "FastAPI", "Python"] },
+      { "id": "mobile", "title": "Mobile", "items": ["React Native", "Flutter (basics)", "Kotlin"] },
+      { "id": "devops", "title": "DevOps & Tools", "items": ["Git & GitHub", "GitLab", "Docker", "Firebase", "Agile"] },
+      { "id": "design", "title": "Design & Creative", "items": ["UI/UX basics", "Adobe Illustrator", "Adobe Premiere Pro", "CapCut Pro", "FL Studio"] }
+    ],
+    "currentGoals": {
+      "title": "Currently improving",
+      "items": ["Next.js", "React Native", "DevOps"]
+    }
+  },
+  "experience": {
+    "title": "Experience",
+    "subtitle": "Internships and professional projects",
+    "items": [
+      {
+        "id": "marketflow-pfe",
+        "role": "End-of-Studies Project (PFE) — MarketFlow",
+        "company": "Artificial Insight",
+        "location": "Tunisia",
+        "period": "Jan 2026 – Jun 2026",
+        "bullets": [
+          "Development of a business management platform based on a microservices architecture.",
+          "Design and implementation of modules for user management, workspaces, permissions, and workflow automation.",
+          "Integration of modern technologies and best practices in software engineering.",
+          "Collaboration using Git, Agile methodologies, and modern development tools."
+        ]
+      },
+      {
+        "id": "ks-improvement",
+        "role": "Improvement Internship",
+        "company": "Kromberg & Schubert",
+        "location": "Béja, Tunisia",
+        "period": "Jan 2025 – Mar 2025",
+        "bullets": [
+          "Developed an internal application to improve IT inventory management processes.",
+          "Designed and implemented user-friendly interfaces.",
+          "Participated in system maintenance and optimization.",
+          "Collaborated with company staff to analyze requirements and deliver practical solutions."
+        ]
+      },
+      {
+        "id": "ks-initiation",
+        "role": "Initiation Internship",
+        "company": "Kromberg & Schubert",
+        "location": "Béja, Tunisia",
+        "period": "Jan 2024 – Mar 2024",
+        "bullets": [
+          "Observed business processes and IT infrastructure within an industrial environment.",
+          "Gained insight into software development workflows and enterprise operations.",
+          "Familiarized with professional tools, teamwork practices, and project organization."
+        ]
+      },
+      {
+        "id": "enactus",
+        "role": "Sponsorship & Marketing Office Lead",
+        "company": "Enactus ISET Béja",
+        "location": "Tunisia",
+        "period": "2 years",
+        "bullets": [
+          "Led sponsorship and marketing activities for student entrepreneurship and innovation projects.",
+          "Supported promotional campaigns and communication activities.",
+          "Contributed to project presentation, partnership outreach, and sponsor communication.",
+          "Developed skills in leadership, teamwork, marketing, communication, and project coordination."
+        ]
+      }
+    ]
+  },
+  "projects": {
+    "title": "Projects",
+    "subtitle": "Selected work from my GitHub",
+    "filters": { "all": "All", "web": "Web", "mobile": "Mobile", "backend": "Backend", "ai": "AI" },
+    "labels": { "code": "Source code", "live": "Live demo", "featured": "Featured" },
+    "items": [
+      {
+        "id": "frepping",
+        "title": "FREPPING",
+        "category": ["web"],
+        "featured": true,
+        "description": "E-commerce platform with a storefront and an admin dashboard (products, categories) built in Angular.",
+        "tech": ["Angular", "TypeScript"],
+        "github": "https://github.com/oussvmvjb/frepping",
+        "live": ""
+      },
+      {
+        "id": "frepping-backend",
+        "title": "FREPPING Backend",
+        "category": ["backend"],
+        "featured": true,
+        "description": "REST API powering the FREPPING storefront and admin dashboard.",
+        "tech": ["Python", "FastAPI"],
+        "github": "https://github.com/oussvmvjb/freepping-backend",
+        "live": ""
+      },
+      {
+        "id": "stock-management",
+        "title": "Stock Management Web App",
+        "category": ["web"],
+        "featured": true,
+        "description": "Full-stack web app for managing stock operations: track products, suppliers, clients and sales in real time, with secure authentication, low-stock alerts and dashboards.",
+        "tech": ["TypeScript", "Angular"],
+        "github": "https://github.com/oussvmvjb/web-app---gestion-de-stock---stage-app",
+        "live": ""
+      },
+      {
+        "id": "marketflow",
+        "title": "MarketFlow",
+        "category": ["web", "backend"],
+        "featured": true,
+        "description": "Business management platform based on a microservices architecture, with user management, workspaces, permissions and workflow automation. My end-of-studies project.",
+        "tech": ["Microservices", "Git", "Agile"],
+        "github": "",
+        "live": ""
+      },
+      {
+        "id": "virtual-medical-coaching",
+        "title": "Virtual Medical Coaching",
+        "category": ["web", "mobile", "backend"],
+        "featured": false,
+        "description": "Medical coaching platform split into a web front end, an Android mobile app and a Java backend.",
+        "tech": ["SCSS", "Kotlin", "Java"],
+        "github": "https://github.com/oussvmvjb/virtual-medical-coaching",
+        "live": ""
+      },
+      {
+        "id": "reservation-express",
+        "title": "Reservation Express",
+        "category": ["mobile", "backend"],
+        "featured": false,
+        "description": "Reservation app with a Flutter mobile client and a Java API.",
+        "tech": ["Flutter", "Dart", "Java"],
+        "github": "https://github.com/oussvmvjb/Reservation-express",
+        "live": ""
+      },
+      {
+        "id": "signvi-ai",
+        "title": "SignVi AI",
+        "category": ["ai", "backend"],
+        "featured": false,
+        "description": "AI project with a Python model and a FastAPI service.",
+        "tech": ["Python", "FastAPI"],
+        "github": "https://github.com/oussvmvjb/SignVi-AI",
+        "live": ""
+      },
+      {
+        "id": "tikthib",
+        "title": "Tikthib Game",
+        "category": ["mobile"],
+        "featured": false,
+        "description": "Mobile game built with Flutter.",
+        "tech": ["Flutter", "Dart"],
+        "github": "https://github.com/oussvmvjb/tikthib---game-mobile-",
+        "live": ""
+      },
+      {
+        "id": "my-weather",
+        "title": "My Weather",
+        "category": ["mobile"],
+        "featured": false,
+        "description": "Weather mobile app built with Flutter.",
+        "tech": ["Flutter", "Dart"],
+        "github": "https://github.com/oussvmvjb/my_weather",
+        "live": ""
+      },
+      {
+        "id": "win-na9ra",
+        "title": "Win Na9ra",
+        "category": ["web"],
+        "featured": false,
+        "description": "Web project deployed on Netlify.",
+        "tech": ["HTML", "CSS"],
+        "github": "https://github.com/oussvmvjb/win-na9ra",
+        "live": "https://win-na9ra.netlify.app/#/"
+      }
+    ],
+    "seeMore": "See all repositories on GitHub"
+  },
+  "education": {
+    "title": "Education",
+    "items": [
+      {
+        "id": "haut",
+        "degree": "Master's Degree in Computer Science and Technology",
+        "school": "Henan University of Technology (HAUT)",
+        "location": "Zhengzhou, China",
+        "period": "2026 – 2029",
+        "status": "Currently studying",
+        "details": [
+          "Computer science, software engineering, and digital technologies.",
+          "Developing technical knowledge applicable to digital media, creative applications, and emerging technologies."
+        ]
+      },
+      {
+        "id": "iset-beja",
+        "degree": "Bachelor's Degree in Computer Systems Development (DSI)",
+        "school": "ISET Béja",
+        "location": "Béja, Tunisia",
+        "period": "2024 – 2026",
+        "status": "",
+        "details": ["Software development, web development, mobile development, databases, object-oriented programming, networking."]
+      },
+      {
+        "id": "iset-medenine",
+        "degree": "Computer Science (Transfer Year)",
+        "school": "Higher Institute of Technological Studies (ISET Médenine)",
+        "location": "Médenine, Tunisia",
+        "period": "2023 – 2024",
+        "status": "",
+        "details": []
+      }
+    ]
+  },
+  "creative": {
+    "title": "Creative work",
+    "subtitle": "Video, design and music alongside code",
+    "intro": "I work as a freelance digital content creator, supporting small streamers and digital creators with video clips, graphics and social media content.",
+    "items": [
+      {
+        "id": "video",
+        "title": "Video Editing",
+        "tools": ["Adobe Premiere Pro", "CapCut Pro"],
+        "points": [
+          "Short-form content and video clipping for streamers and social media.",
+          "Transitions, effects, text animation, typography and visual storytelling."
+        ]
+      },
+      {
+        "id": "graphic",
+        "title": "Graphic Design",
+        "tools": ["Adobe Illustrator"],
+        "points": [
+          "Digital graphics and promotional visuals.",
+          "Typography, composition and visual design."
+        ]
+      },
+      {
+        "id": "music",
+        "title": "Music Production",
+        "tools": ["FL Studio"],
+        "points": [
+          "Beat-making and music composition.",
+          "Arrangement, audio editing and creative audio production."
+        ]
+      }
+    ]
+  },
+  "languages": {
+    "title": "Languages",
+    "items": [
+      { "name": "Arabic", "level": "Native", "percent": 100 },
+      { "name": "French", "level": "Intermediate", "percent": 65 },
+      { "name": "English", "level": "B2", "percent": 70 },
+      { "name": "Chinese (Mandarin)", "level": "Beginner (learning)", "percent": 20 }
+    ]
+  },
+  "activities": {
+    "title": "Activities",
+    "items": [
+      "Member of Enactus ISET Béja for 2 years — Sponsorship & Marketing Office Lead.",
+      "Participation in innovation and entrepreneurship projects."
+    ]
+  },
+  "contact": {
+    "title": "Get in touch",
+    "subtitle": "Open to internships, collaborations and freelance work.",
+    "form": {
+      "name": "Your name",
+      "email": "Your email",
+      "subject": "Subject",
+      "message": "Your message",
+      "send": "Send message",
+      "sending": "Sending…",
+      "success": "Message sent. Thank you!",
+      "error": "Something went wrong. Please try again.",
+      "validation": {
+        "required": "This field is required.",
+        "email": "Please enter a valid email."
+      }
+    },
+    "info": { "email": "Email", "phone": "Phone", "location": "Location" }
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "built": "Built with Next.js, TypeScript and Tailwind CSS.",
+    "backToTop": "Back to top"
+  },
+  "theme": {
+    "open": "Customize theme",
+    "title": "Theme Customizer",
+    "subtitle": "Customize & Preview in Real Time",
+    "theming": "Theming",
+    "sections": "Sections",
+    "primary": "Primary Color",
+    "mode": "Mode",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "reset": "Reset",
+    "close": "Close"
+  },
+  "notFound": {
+    "title": "OOPS!",
+    "subtitle": "404 – PAGE NOT FOUND",
+    "description": "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.",
+    "cta": "Back home"
+  }
+}
