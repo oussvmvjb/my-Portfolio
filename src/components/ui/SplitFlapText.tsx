@@ -34,7 +34,6 @@ type Timing = {
   glyphs: string;
   order: SplitFlapOrder;
 };
-
 export type SplitFlapAlign = 'left' | 'center' | 'right';
 
 export type SplitFlapOrder = 'left' | 'right' | 'center' | 'random';
@@ -68,6 +67,10 @@ export interface SplitFlapTextProps extends HTMLAttributes<HTMLDivElement> {
   minFontSize?: number;
   /** Max font size when responsive=true (px). Default: 96 */
   maxFontSize?: number;
+  /** Wrap onto multiple lines without breaking words. Default: true */
+  wrap?: boolean;
+  /** Target characters per line when responsive + wrap. Default: 24 */
+  charsPerLine?: number;
 }
 
 const DEFAULT_WORDS = ['LAUNCH READY', 'SYNC ONLINE', 'SIGNAL LIVE'];
@@ -112,6 +115,9 @@ const styles = `
 @keyframes split-flap-back{0%,50%{transform:rotateX(90deg);filter:brightness(var(--split-flap-back-from,.58));animation-timing-function:cubic-bezier(.215,.61,.355,1)}100%{transform:rotateX(0deg);filter:brightness(1)}}
 @keyframes split-flap-reveal{0%{clip-path:inset(0 0 100% 0)}23.14%{clip-path:inset(0 0 99.21% 0)}29.67%{clip-path:inset(0 0 95.55% 0)}33.95%{clip-path:inset(0 0 89.09% 0)}37.41%{clip-path:inset(0 0 79.46% 0)}40.56%{clip-path:inset(0 0 66.05% 0)}43.73%{clip-path:inset(0 0 47.69% 0)}47.38%{clip-path:inset(0 0 21.22% 0)}50%,100%{clip-path:inset(0 0 0 0)}}
 @keyframes split-flap-cover{0%,50%{clip-path:inset(0 0 0 0)}54.42%{clip-path:inset(35.75% 0 0 0)}57.44%{clip-path:inset(55.86% 0 0 0)}60.39%{clip-path:inset(70.63% 0 0 0)}63.65%{clip-path:inset(81.86% 0 0 0)}67.65%{clip-path:inset(90.23% 0 0 0)}73.17%{clip-path:inset(96% 0 0 0)}82.62%{clip-path:inset(99.25% 0 0 0)}100%{clip-path:inset(100% 0 0 0)}}
+.split-flap-text--wrap{display:flex !important;flex-wrap:wrap;row-gap:calc(var(--split-flap-gap,4px) * 2);overflow:visible !important;white-space:normal !important}
+.split-flap-text__word{display:inline-flex;flex-wrap:nowrap;gap:var(--split-flap-gap,4px)}
+.split-flap-text__tile--space{width:.4em}
 @media (prefers-reduced-motion: reduce){.split-flap-text__flap,.split-flap-text__flap::after,.split-flap-text__shade,.split-flap-text__half{animation:none !important}}
 `;
 
@@ -217,6 +223,8 @@ const SplitFlapText = ({
   responsive = false,
   minFontSize = 10,
   maxFontSize = 96,
+  wrap = true,
+  charsPerLine = 24,
   className = '',
   style = {},
   ...props
@@ -250,7 +258,7 @@ const SplitFlapText = ({
     const gapPx = typeof gap === 'number' ? gap : parseFloat(String(gap)) || 3;
 
     const compute = (availableWidth: number) => {
-      const numTiles = width || 1;
+      const numTiles = wrap ? Math.min(width || 1, charsPerLine) : width || 1;
       const fs = (availableWidth - (numTiles - 1) * gapPx) / (numTiles * 0.78);
       return Math.min(maxFontSize, Math.max(minFontSize, Math.floor(fs)));
     };
@@ -267,7 +275,7 @@ const SplitFlapText = ({
     if (w > 0) setAutoFontSize(compute(w));
 
     return () => ro.disconnect();
-  }, [responsive, gap, width, minFontSize, maxFontSize]);
+  }, [responsive, gap, width, minFontSize, maxFontSize, wrap, charsPerLine]);
 
   const normalizedPhrases = useMemo(
     () => phrases.map(phrase => normalizePhrase(phrase, width, align)),
@@ -504,6 +512,7 @@ const SplitFlapText = ({
     'split-flap-text',
     minimal ? 'split-flap-text--minimal' : 'split-flap-text--board',
     sheen > 0 && 'split-flap-text--glare',
+    wrap && 'split-flap-text--wrap',
     'relative inline-flex items-center whitespace-pre select-none max-w-full overflow-x-auto',
     className
   ]
@@ -531,9 +540,30 @@ const SplitFlapText = ({
     ...style
   };
 
-  const tileNodes = tiles.map((tile, index) => (
+  const layout = normalizedPhrases[activeIndex] ?? normalizedPhrases[0] ?? '';
+
+  const groups: number[][] = [];
+  if (wrap) {
+    let cur: number[] = [];
+    for (let i = 0; i < tiles.length; i += 1) {
+      cur.push(i);
+      const isSpace = layout[i] === ' ';
+      const nextIsWord = layout[i + 1] !== undefined && layout[i + 1] !== ' ';
+      if (isSpace && nextIsWord) {
+        groups.push(cur);
+        cur = [];
+      }
+    }
+    while (cur.length && layout[cur[cur.length - 1]] === ' ') cur.pop();
+    if (cur.length) groups.push(cur);
+  }
+  const wordGroups = groups.filter(g => g.some(i => layout[i] !== ' '));
+
+  const renderTile = (tile: TileState, index: number) => (
     <span
-      className={`split-flap-text__tile${tile.flipping ? ' is-flipping' : ''}`}
+      className={`split-flap-text__tile${tile.flipping ? ' is-flipping' : ''}${
+        wrap && layout[index] === ' ' ? ' split-flap-text__tile--space' : ''
+      }`}
       aria-hidden="true"
       key={`${index}-${tiles.length}`}
     >
@@ -554,12 +584,18 @@ const SplitFlapText = ({
         </>
       )}
     </span>
-  ));
+  );
 
   const board = (
     <div ref={containerRef} className={rootClass} style={componentStyle} {...props}>
       <span className="sr-only">{label}</span>
-      {tileNodes}
+      {wrap
+        ? wordGroups.map((g, gi) => (
+            <span className="split-flap-text__word" key={gi}>
+              {g.map(i => renderTile(tiles[i], i))}
+            </span>
+          ))
+        : tiles.map((tile, index) => renderTile(tile, index))}
     </div>
   );
 

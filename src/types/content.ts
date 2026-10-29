@@ -146,6 +146,7 @@ export interface LanguageItem {
   name: string;
   level: string;
   percent: number;
+  score?: number;
 }
 
 export interface LanguagesContent {

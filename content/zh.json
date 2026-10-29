@@ -310,10 +310,10 @@
   "languages": {
     "title": "语言能力",
     "items": [
-      { "name": "阿拉伯语", "level": "母语", "percent": 100 },
-      { "name": "法语", "level": "流利进阶", "percent": 65 },
-      { "name": "英语", "level": "B2 商务工作水平", "percent": 70 },
-      { "name": "中文（普通话）", "level": "初学进阶中", "percent": 20 }
+      { "name": "阿拉伯语", "level": "母语", "percent": 100, "score": 5 },
+      { "name": "法语", "level": "流利进阶", "percent": 80, "score": 4 },
+      { "name": "英语", "level": "B2 商务工作水平", "percent": 80, "score": 4 },
+      { "name": "中文（普通话）", "level": "初学进阶中", "percent": 40, "score": 2 }
     ]
   },
   "activities": {

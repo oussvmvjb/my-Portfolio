@@ -5,6 +5,7 @@ import "@fontsource-variable/noto-sans-sc";
 import { justBreathe } from "@/lib/fonts";
 import { ThemeProvider } from "@/lib/theme/ThemeProvider";
 import ThemeCustomizer from "@/components/theme/ThemeCustomizer";
+import AppBackground from "@/components/layout/AppBackground";
 import { getContent } from "@/lib/content";
 import "@/styles/theme.css";
 
@@ -85,10 +86,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="bg-bg font-sans text-fg antialiased selection:bg-primary/20 selection:text-primary min-h-screen">
+      <body className="bg-bg font-sans text-fg antialiased selection:bg-primary/20 selection:text-primary min-h-screen relative">
         <ThemeProvider>
-          {children}
-          <ThemeCustomizer labels={content.theme as unknown as Record<string, string>} />
+          <AppBackground />
+          <div className="relative z-10 flex min-h-screen flex-col">
+            {children}
+            <ThemeCustomizer labels={content.theme as unknown as Record<string, string>} />
+          </div>
         </ThemeProvider>
       </body>
     </html>

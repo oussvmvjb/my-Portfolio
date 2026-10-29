@@ -310,10 +310,10 @@
   "languages": {
     "title": "اللغات",
     "items": [
-      { "name": "العربية", "level": "اللغة الأم", "percent": 100 },
-      { "name": "الفرنسية", "level": "متوسط", "percent": 65 },
-      { "name": "الإنجليزية", "level": "B2", "percent": 70 },
-      { "name": "الصينية (الماندرين)", "level": "مبتدئ (قيد التعلّم)", "percent": 20 }
+      { "name": "العربية", "level": "اللغة الأم", "percent": 100, "score": 5 },
+      { "name": "الفرنسية", "level": "متوسط", "percent": 80, "score": 4 },
+      { "name": "الإنجليزية", "level": "B2", "percent": 80, "score": 4 },
+      { "name": "الصينية (الماندرين)", "level": "مبتدئ (قيد التعلّم)", "percent": 40, "score": 2 }
     ]
   },
   "activities": {

@@ -7,7 +7,7 @@ export type SectionId = (typeof SECTION_IDS)[number];
 export const SECTION_VARIANTS: Record<SectionId, { id: string; label: string }[]> = {
   home:       [{ id: "classic", label: "Classic" }, { id: "centered", label: "Centered" }, { id: "split", label: "Split" }, { id: "glitch", label: "Glitch" }],
   about:      [{ id: "cards", label: "Cards" }, { id: "story", label: "Story" }],
-  skills:     [{ id: "grid", label: "Grid" }, { id: "tabs", label: "Tabs" }, { id: "marquee", label: "Marquee" }],
+  skills:     [{ id: "marquee", label: "Logo Loop" }, { id: "grid", label: "Grid" }, { id: "tabs", label: "Tabs" }],
   experience: [{ id: "timeline", label: "Timeline" }, { id: "cards", label: "Cards" }],
   projects:   [{ id: "grid", label: "Grid" }, { id: "list", label: "List" }, { id: "carousel", label: "Carousel" }],
   education:  [{ id: "timeline", label: "Timeline" }, { id: "cards", label: "Cards" }],

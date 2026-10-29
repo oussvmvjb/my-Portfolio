@@ -2,6 +2,7 @@ import type { SectionProps } from "../registry";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Card from "@/components/ui/Card";
 import Chip from "@/components/ui/Chip";
+import LanguageHeartRating from "@/components/ui/LanguageHeartRating";
 import { CheckCircle2, Globe2, GraduationCap, MapPin, Target } from "lucide-react";
 
 export default function AboutCards({ content }: SectionProps) {
@@ -59,26 +60,26 @@ export default function AboutCards({ content }: SectionProps) {
         </div>
       </div>
 
-      {/* Languages bar (integrated inside About) */}
+      {/* Languages bar (integrated inside About) with Pixel Heart Lottie ratings */}
       {languages?.items && (
-        <Card className="p-6 md:p-8">
-          <h3 className="text-xl font-bold text-fg mb-6 font-display text-start">
-            {languages.title}
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="p-6 md:p-8 border border-border/80 bg-surface/40 backdrop-blur-sm">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-fg font-display text-start">
+              {languages.title}
+            </h3>
+            <span className="text-xs font-mono text-muted/70 uppercase tracking-wider hidden sm:inline-flex">
+              Pixel Heart Rating
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {languages.items.map((lang) => (
-              <div key={lang.name} className="space-y-2 text-start">
-                <div className="flex justify-between items-center text-sm font-semibold">
-                  <span className="text-fg">{lang.name}</span>
-                  <span className="text-xs text-primary">{lang.level}</span>
-                </div>
-                <div className="h-2 w-full rounded-full bg-border overflow-hidden">
-                  <div
-                    className="h-full bg-primary rounded-full transition-all duration-700"
-                    style={{ width: `${lang.percent}%` }}
-                  />
-                </div>
-              </div>
+              <LanguageHeartRating
+                key={lang.name}
+                name={lang.name}
+                level={lang.level}
+                score={lang.score}
+              />
             ))}
           </div>
         </Card>

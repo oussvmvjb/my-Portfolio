@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { SectionProps } from "../registry";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Chip from "@/components/ui/Chip";
+import LanguageHeartRating from "@/components/ui/LanguageHeartRating";
 import { CheckCircle2, Quote } from "lucide-react";
 
 export default function AboutStory({ content }: SectionProps) {
@@ -80,20 +81,15 @@ export default function AboutStory({ content }: SectionProps) {
               <p className="text-sm font-bold text-fg font-display">
                 {languages.title}
               </p>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {languages.items.map((lang) => (
-                  <div key={lang.name} className="p-3 rounded-xl bg-surface border border-border">
-                    <div className="flex justify-between items-center text-xs font-semibold mb-1">
-                      <span className="text-fg">{lang.name}</span>
-                      <span className="text-primary">{lang.percent}%</span>
-                    </div>
-                    <div className="h-1.5 w-full rounded-full bg-border overflow-hidden">
-                      <div
-                        className="h-full bg-primary rounded-full"
-                        style={{ width: `${lang.percent}%` }}
-                      />
-                    </div>
-                  </div>
+                  <LanguageHeartRating
+                    key={lang.name}
+                    name={lang.name}
+                    level={lang.level}
+                    score={(lang as unknown as { score?: number }).score}
+                    compact
+                  />
                 ))}
               </div>
             </div>

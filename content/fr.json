@@ -310,10 +310,10 @@
   "languages": {
     "title": "Langues",
     "items": [
-      { "name": "Arabe", "level": "Langue maternelle", "percent": 100 },
-      { "name": "Français", "level": "Intermédiaire", "percent": 65 },
-      { "name": "Anglais", "level": "B2", "percent": 70 },
-      { "name": "Chinois (Mandarin)", "level": "Débutant (en apprentissage)", "percent": 20 }
+      { "name": "Arabe", "level": "Langue maternelle", "percent": 100, "score": 5 },
+      { "name": "Français", "level": "Intermédiaire", "percent": 80, "score": 4 },
+      { "name": "Anglais", "level": "B2", "percent": 80, "score": 4 },
+      { "name": "Chinois (Mandarin)", "level": "Débutant (en apprentissage)", "percent": 40, "score": 2 }
     ]
   },
   "activities": {

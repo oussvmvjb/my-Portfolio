@@ -1,5 +1,8 @@
+'use client';
+
 import type { ReactNode } from "react";
 import SplitFlapText from "./SplitFlapText";
+import ScrollFloat from "./ScrollFloat";
 
 interface SectionHeadingProps {
   title: string;
@@ -33,9 +36,24 @@ export default function SectionHeading({
           {badge}
         </span>
       )}
-      <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-fg font-display">
+      <ScrollFloat
+        effect="float"
+        splitBy="chars"
+        direction="up"
+        order="start"
+        animationDuration={0.9}
+        ease="back.inOut(2)"
+        scrollStart="center bottom+=50%"
+        scrollEnd="bottom bottom-=40%"
+        stagger={0.03}
+        distance={80}
+        stretch={1.8}
+        smoothing={0}
+        containerClassName={`text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-fg font-display leading-tight ${isCentered ? "mx-auto" : ""}`}
+        textClassName="flex-wrap"
+      >
         {title}
-      </h2>
+      </ScrollFloat>
       {subtitle && (
         useSplitFlap ? (
           <div className="mt-4 flex max-w-full overflow-x-auto">
