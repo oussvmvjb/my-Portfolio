@@ -152,8 +152,9 @@ export default function ScrollFloat({
           start: clampToScroll(scrollStart),
           end: clampToScroll(scrollEnd),
           scrub: smoothing > 0 ? smoothing : false,
+          // play entering-down | reverse leaving-down | play entering-up | reverse leaving-up
           toggleActions:
-            smoothing > 0 ? undefined : 'play none none reverse',
+            smoothing > 0 ? undefined : 'play reverse play reverse',
         },
       });
 
