@@ -124,8 +124,8 @@ export default function HomeClassic({ content }: SectionProps) {
           </div>
         </div>
 
-        {/* Profile Card (right) */}
-        <div className="flex justify-center items-center shrink-0 w-full lg:w-auto">
+        {/* Visual Column (right): Profile Card */}
+        <div className="flex flex-col items-center shrink-0 w-full lg:w-auto max-w-[440px]">
           <ProfileCard
             avatarUrl="/images/avatar.png"
             miniAvatarUrl="/images/avatar.png"

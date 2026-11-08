@@ -3,6 +3,7 @@
 import { Suspense, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF, Environment, ContactShadows, OrbitControls } from '@react-three/drei';
+import * as THREE from 'three';
 import type { Group } from 'three';
 
 // Configure Draco decoder (Meshy AI models are Draco-compressed)
@@ -36,7 +37,7 @@ function LoadingFallback() {
 }
 
 export interface ModelViewerProps {
-  src: string;
+  src?: string;
   className?: string;
   autoRotate?: boolean;
   cameraPosition?: [number, number, number];
@@ -45,10 +46,10 @@ export interface ModelViewerProps {
 }
 
 export default function ModelViewer({
-  src,
+  src = '/models/robot/ROBOT.glb',
   className = '',
   autoRotate = true,
-  cameraPosition = [0, 0, 3],
+  cameraPosition = [0, 0, 5],
   environment = 'city',
 }: ModelViewerProps) {
   return (
@@ -57,6 +58,10 @@ export default function ModelViewer({
         camera={{ position: cameraPosition, fov: 45 }}
         style={{ width: '100%', height: '100%' }}
         gl={{ antialias: true, alpha: true }}
+        shadows={{ type: THREE.PCFShadowMap }}
+        onCreated={({ gl }) => {
+          gl.shadowMap.type = THREE.PCFShadowMap;
+        }}
       >
         <ambientLight intensity={0.5} />
         <directionalLight position={[5, 5, 5]} intensity={1} castShadow />

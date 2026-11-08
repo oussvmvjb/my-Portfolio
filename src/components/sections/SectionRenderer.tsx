@@ -7,21 +7,27 @@ import ScrollReveal from "@/components/ui/ScrollReveal";
 
 export default function SectionRenderer({ content }: { content: Content }) {
   const { order, hidden, variants } = useTheme();
+  const visibleSections = order.filter((id) => !hidden.includes(id));
+
   return (
     <>
-      {order.filter((id) => !hidden.includes(id)).map((id) => {
+      {visibleSections.map((id, index) => {
         const Variant = REGISTRY[id][variants[id]] ?? Object.values(REGISTRY[id])[0];
+        const isHero = id === "home" || index === 0;
+
         return (
           <section key={id} id={id} className="scroll-mt-20 py-20 md:py-28">
             <div className="mx-auto w-full max-w-6xl px-5">
               <ScrollReveal
-                distance={70}
-                duration={0.85}
+                isHero={isHero}
+                distance={35}
+                duration={0.9}
+                scaleFrom={0.98}
+                blurFrom={8}
                 ease="power3.out"
-                start="top 90%"
-                end="bottom 10%"
+                start="top 85%"
                 staggerChildren
-                stagger={0.1}
+                stagger={0.08}
               >
                 <Variant content={content} />
               </ScrollReveal>

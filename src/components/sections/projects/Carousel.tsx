@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { SectionProps } from "../registry";
 import SectionHeading from "@/components/ui/SectionHeading";
 import ProjectCard from "@/components/ui/ProjectCard";
@@ -17,6 +18,13 @@ export default function ProjectsCarousel({ content }: SectionProps) {
     if (activeFilter === "all") return true;
     return item.category.includes(activeFilter);
   });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 60);
+    return () => clearTimeout(timer);
+  }, [activeFilter]);
 
   const scroll = (direction: -1 | 1) => {
     if (scrollRef.current) {

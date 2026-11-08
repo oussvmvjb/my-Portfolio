@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { SectionProps } from "../registry";
 import SectionHeading from "@/components/ui/SectionHeading";
 import ProjectCard from "@/components/ui/ProjectCard";
@@ -15,6 +16,13 @@ export default function ProjectsGrid({ content }: SectionProps) {
     if (activeFilter === "all") return true;
     return item.category.includes(activeFilter);
   });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 60);
+    return () => clearTimeout(timer);
+  }, [activeFilter]);
 
   return (
     <div className="space-y-10">
@@ -43,12 +51,13 @@ export default function ProjectsGrid({ content }: SectionProps) {
       {/* Grid of Projects */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredItems.map((project) => (
-          <ProjectCard
-            key={project.id}
-            project={project}
-            labels={projects.labels}
-            layout="grid"
-          />
+          <div key={project.id} className="transition-all duration-300">
+            <ProjectCard
+              project={project}
+              labels={projects.labels}
+              layout="grid"
+            />
+          </div>
         ))}
       </div>
 

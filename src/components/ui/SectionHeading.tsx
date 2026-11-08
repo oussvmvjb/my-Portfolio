@@ -27,12 +27,16 @@ export default function SectionHeading({
 
   return (
     <div
+      data-section-heading
       className={`mb-12 ${
         isCentered ? "text-center mx-auto max-w-3xl" : "text-start max-w-3xl"
       } ${className}`}
     >
       {badge && (
-        <span className="inline-block mb-3 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-primary/10 text-primary border border-primary/20">
+        <span
+          data-heading-badge
+          className="inline-block mb-3 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-primary/10 text-primary border border-primary/20"
+        >
           {badge}
         </span>
       )}
@@ -41,14 +45,14 @@ export default function SectionHeading({
         splitBy="chars"
         direction="up"
         order="start"
-        animationDuration={0.9}
-        ease="back.inOut(2)"
-        scrollStart="center bottom+=50%"
-        scrollEnd="bottom bottom-=40%"
-        stagger={0.03}
-        distance={80}
-        stretch={1.8}
+        animationDuration={0.85}
+        ease="power3.out"
+        scrollStart="top 85%"
+        stagger={0.02}
+        distance={28}
+        stretch={1.0}
         smoothing={0}
+        once={true}
         containerClassName={`text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-fg font-display leading-tight ${isCentered ? "mx-auto" : ""}`}
         textClassName="flex-wrap"
       >
@@ -56,7 +60,7 @@ export default function SectionHeading({
       </ScrollFloat>
       {subtitle && (
         useSplitFlap ? (
-          <div className="mt-4 flex max-w-full overflow-x-auto">
+          <div data-heading-subtitle className="mt-4 flex max-w-full overflow-x-auto">
             <SplitFlapText
               text={subtitle}
               fontSize={17}
@@ -70,7 +74,7 @@ export default function SectionHeading({
             />
           </div>
         ) : (
-          <p className="mt-3 text-base md:text-lg text-muted leading-relaxed">
+          <p data-heading-subtitle className="mt-3 text-base md:text-lg text-muted leading-relaxed">
             {subtitle}
           </p>
         )

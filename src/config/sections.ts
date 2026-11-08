@@ -5,7 +5,7 @@ export type SectionId = (typeof SECTION_IDS)[number];
 
 /** Add a variant id here + a component in src/components/sections/<id>/<Variant>.tsx + register it in registry.ts */
 export const SECTION_VARIANTS: Record<SectionId, { id: string; label: string }[]> = {
-  home:       [{ id: "classic", label: "Classic" }, { id: "centered", label: "Centered" }, { id: "split", label: "Split" }, { id: "glitch", label: "Glitch" }],
+  home:       [{ id: "classic", label: "Classic" }, { id: "robot", label: "3D Robot" }, { id: "centered", label: "Centered" }, { id: "split", label: "Split" }, { id: "glitch", label: "Glitch" }],
   about:      [{ id: "cards", label: "Cards" }, { id: "story", label: "Story" }],
   skills:     [{ id: "marquee", label: "Logo Loop" }, { id: "grid", label: "Grid" }, { id: "tabs", label: "Tabs" }],
   experience: [{ id: "timeline", label: "Timeline" }, { id: "cards", label: "Cards" }],

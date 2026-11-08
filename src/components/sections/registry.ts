@@ -7,6 +7,7 @@ type Registry = Record<SectionId, Record<string, ComponentType<SectionProps>>>;
 
 /** One import per design. File layout: sections/<section>/<Variant>.tsx (default export). */
 import HomeClassic from "./home/Classic";
+import HomeRobot from "./home/Robot";
 import HomeCentered from "./home/Centered";
 import HomeSplit from "./home/Split";
 import HomeGlitch from "./home/Glitch";
@@ -28,7 +29,7 @@ import ContactSplit from "./contact/Split";
 import ContactCentered from "./contact/Centered";
 
 export const REGISTRY: Registry = {
-  home: { classic: HomeClassic, centered: HomeCentered, split: HomeSplit, glitch: HomeGlitch },
+  home: { classic: HomeClassic, robot: HomeRobot, centered: HomeCentered, split: HomeSplit, glitch: HomeGlitch },
   about: { cards: AboutCards, story: AboutStory },
   skills: { grid: SkillsGrid, tabs: SkillsTabs, marquee: SkillsMarquee },
   experience: { timeline: ExperienceTimeline, cards: ExperienceCards },

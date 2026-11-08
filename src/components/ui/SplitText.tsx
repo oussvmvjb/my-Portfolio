@@ -95,7 +95,7 @@ const SplitText = ({
   from,
   to,
   threshold = 0.1,
-  rootMargin = '-100px',
+  rootMargin = '0px',
   textAlign = 'center',
   tag = 'p',
   staggerFrom = 'start',

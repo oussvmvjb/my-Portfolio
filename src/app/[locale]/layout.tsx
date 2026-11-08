@@ -6,6 +6,7 @@ import { justBreathe } from "@/lib/fonts";
 import { ThemeProvider } from "@/lib/theme/ThemeProvider";
 import ThemeCustomizer from "@/components/theme/ThemeCustomizer";
 import AppBackground from "@/components/layout/AppBackground";
+import FloatingRobot from "@/components/3d/FloatingRobot";
 import { getContent } from "@/lib/content";
 import "@/styles/theme.css";
 
@@ -89,6 +90,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
       <body className="bg-bg font-sans text-fg antialiased selection:bg-primary/20 selection:text-primary min-h-screen relative">
         <ThemeProvider>
           <AppBackground />
+          <FloatingRobot />
           <div className="relative z-10 flex min-h-screen flex-col">
             {children}
             <ThemeCustomizer labels={content.theme as unknown as Record<string, string>} />

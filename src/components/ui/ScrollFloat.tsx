@@ -47,6 +47,7 @@ export interface ScrollFloatProps {
   distance?: number;
   stretch?: number;
   smoothing?: number;
+  once?: boolean;
 }
 
 const clampToScroll = (position: string) =>
@@ -94,14 +95,15 @@ export default function ScrollFloat({
   direction = 'up',
   order = 'start',
   fromColor = 'currentColor',
-  animationDuration = 1,
-  ease = 'back.inOut(2)',
-  scrollStart = 'center bottom+=50%',
+  animationDuration = 0.85,
+  ease = 'power3.out',
+  scrollStart = 'top 85%',
   scrollEnd = 'bottom bottom-=40%',
-  stagger = 0.03,
-  distance = 120,
-  stretch = 2.3,
+  stagger = 0.02,
+  distance = 30,
+  stretch = 1.0,
   smoothing = 0,
+  once = true,
 }: ScrollFloatProps) {
   const containerRef = useRef<HTMLHeadingElement>(null);
   const [isClient, setIsClient] = useState(false);
@@ -145,6 +147,7 @@ export default function ScrollFloat({
     const mm = gsap.matchMedia();
 
     mm.add('(prefers-reduced-motion: no-preference)', () => {
+      const isOnce = smoothing > 0 ? false : once;
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: container,
@@ -152,9 +155,9 @@ export default function ScrollFloat({
           start: clampToScroll(scrollStart),
           end: clampToScroll(scrollEnd),
           scrub: smoothing > 0 ? smoothing : false,
-          // play entering-down | reverse leaving-down | play entering-up | reverse leaving-up
+          once: isOnce,
           toggleActions:
-            smoothing > 0 ? undefined : 'play reverse play reverse',
+            smoothing > 0 ? undefined : isOnce ? 'play none none none' : 'play reverse play reverse',
         },
       });
 
@@ -175,6 +178,7 @@ export default function ScrollFloat({
 
         if (effect === 'float') {
           fromVars.y = sign * distance;
+          fromVars.filter = 'blur(6px)';
           fromVars.scaleY = stretch;
           fromVars.transformOrigin = direction === 'up' ? 'center bottom' : 'center top';
         } else if (effect === 'flip') {
@@ -195,9 +199,17 @@ export default function ScrollFloat({
         tl.from(el, fromVars, 0);
       });
 
+      tl.eventCallback('onComplete', () => {
+        gsap.set(spans, { clearProps: 'all' });
+      });
+
       return () => {
         tl.kill();
       };
+    });
+
+    mm.add('(prefers-reduced-motion: reduce)', () => {
+      gsap.set(spans, { opacity: 1, y: 0, filter: 'none', clearProps: 'all' });
     });
 
     return () => mm.revert();
@@ -216,6 +228,7 @@ export default function ScrollFloat({
     scrollEnd,
     smoothing,
     scrollContainerRef,
+    once,
   ]);
 
   return (
