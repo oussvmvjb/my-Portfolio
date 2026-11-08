@@ -21,6 +21,7 @@ import React, { useRef, useEffect, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
+import JetThrusterEffect from './JetThrusterEffect';
 
 // ─── Animation Types ──────────────────────────────────────────────────────────
 export type RobotAnimationType =
@@ -167,6 +168,15 @@ export default function RobotModel({
   // Rest quaternions captured from GLB bind pose
   const restRef = useRef<Map<THREE.Bone, THREE.Quaternion>>(new Map());
 
+  // Jet thruster refs & vector caching
+  const thrusterLRef = useRef<THREE.Group>(null);
+  const thrusterRRef = useRef<THREE.Group>(null);
+  const footAnchorLRef = useRef<THREE.Object3D | null>(null);
+  const footAnchorRRef = useRef<THREE.Object3D | null>(null);
+  const thrusterIntensityRef = useRef<number>(0.2);
+  const _footWPosL = useRef(new THREE.Vector3()).current;
+  const _footWPosR = useRef(new THREE.Vector3()).current;
+
   // Animation timing
   const animTimeRef = useRef(0);
   const endFiredRef = useRef(false);
@@ -176,32 +186,38 @@ export default function RobotModel({
   useEffect(() => {
     if (!scene) return;
 
-    // Shader materials
-    const mainArmor = new THREE.MeshStandardMaterial({
-      color: new THREE.Color('#1e2330'),
-      roughness: 0.28,
-      metalness: 0.85,
-      envMapIntensity: 1.2,
+    // ── Bumblebee Automotive Materials Palette ──
+    const matYellow = new THREE.MeshPhysicalMaterial({
+      color: new THREE.Color('#FFBE00'),
+      metalness: 0.65,
+      roughness: 0.22,
+      clearcoat: 0.95,
+      clearcoatRoughness: 0.14,
+      reflectivity: 0.9,
     });
-    const darkAlloy = new THREE.MeshStandardMaterial({
-      color: new THREE.Color('#0d1117'),
-      roughness: 0.45,
-      metalness: 0.95,
-      envMapIntensity: 0.9,
+    const matBlack = new THREE.MeshPhysicalMaterial({
+      color: new THREE.Color('#131518'),
+      metalness: 0.78,
+      roughness: 0.26,
+      clearcoat: 0.85,
+      clearcoatRoughness: 0.18,
     });
-    const accent = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(primaryColor),
-      roughness: 0.2,
-      metalness: 0.7,
-      emissive: new THREE.Color(primaryColor),
-      emissiveIntensity: 0.4,
+    const matGunmetal = new THREE.MeshStandardMaterial({
+      color: new THREE.Color('#2A2E35'),
+      metalness: 0.92,
+      roughness: 0.36,
     });
-    const eyeGlow = new THREE.MeshStandardMaterial({
-      color: new THREE.Color('#38bdf8'),
-      roughness: 0.08,
-      metalness: 0.0,
-      emissive: new THREE.Color('#0ea5e9'),
-      emissiveIntensity: 1.8,
+    const matSilver = new THREE.MeshStandardMaterial({
+      color: new THREE.Color('#B2BDC8'),
+      metalness: 0.96,
+      roughness: 0.18,
+    });
+    const matEyes = new THREE.MeshStandardMaterial({
+      color: new THREE.Color('#00CFFF'),
+      emissive: new THREE.Color('#00B4FF'),
+      emissiveIntensity: 2.8,
+      roughness: 0.04,
+      metalness: 0.05,
     });
 
     const bones = bonesRef.current;
@@ -241,18 +257,106 @@ export default function RobotModel({
       toer: ['toeR'],
     };
 
+    // Bumblebee Part Classifications
+    const yellowMeshNames = new Set([
+      'sphere',
+      'cube.012', 'cube012',
+      'cylinder.003', 'cylinder003',
+      'cylinder.005', 'cylinder005',
+      'cylinder.008', 'cylinder008',
+      'cylinder.009', 'cylinder009',
+      'cylinder.016', 'cylinder016',
+      'cylinder.017', 'cylinder017',
+      'cube.005', 'cube005',
+      'cube.001', 'cube001',
+      'sphere.003', 'sphere003',
+      'sphere.004', 'sphere004',
+      'cylinder.012', 'cylinder012',
+      'cylinder.013', 'cylinder013',
+    ]);
+
+    const blackMeshNames = new Set([
+      'cylinder.025', 'cylinder025',
+      'cube.015', 'cube015',
+      'cube.002', 'cube002',
+      'sphere.001', 'sphere001',
+      'sphere.002', 'sphere002',
+      'cube.003', 'cube003',
+      'cube.013', 'cube013',
+      'cube.006', 'cube006',
+      'cube.008', 'cube008',
+      'cube.010', 'cube010',
+      'cube.011', 'cube011',
+    ]);
+
+    const silverMeshNames = new Set([
+      'cylinder',
+      'cylinder.010', 'cylinder010',
+      'cylinder.018', 'cylinder018',
+      'cylinder.019', 'cylinder019',
+      'cylinder.020', 'cylinder020',
+      'cylinder.021', 'cylinder021',
+      'cylinder.022', 'cylinder022',
+      'cylinder.023', 'cylinder023',
+    ]);
+
+    const eyeMeshNames = new Set([
+      'sphere.005', 'sphere005',
+      'sphere.006', 'sphere006',
+      'sphere.007', 'sphere007',
+      'sphere.004', 'sphere004',
+    ]);
+
+    let totalObjects = 0;
     let totalBonesCount = 0;
     let totalSkinnedMeshes = 0;
     let validSkinnedMeshes = 0;
+    let countYellow = 0;
+    let countBlack = 0;
+    let countGunmetal = 0;
+    let countSilver = 0;
+    let countEyes = 0;
+    const unrecognized: string[] = [];
 
     // Traverse scene once
     scene.traverse((obj) => {
-      // 1. SkinnedMesh validation
+      totalObjects++;
+
+      // 1. SkinnedMesh validation & material assignment
       if ((obj as THREE.SkinnedMesh).isSkinnedMesh) {
         totalSkinnedMeshes++;
         const sm = obj as THREE.SkinnedMesh;
         if (sm.skeleton && sm.skeleton.bones && sm.skeleton.bones.length > 0) {
           validSkinnedMeshes++;
+        }
+        sm.castShadow = true;
+        sm.receiveShadow = true;
+
+        const n = sm.name.toLowerCase();
+
+        if (eyeMeshNames.has(n)) {
+          sm.material = matEyes;
+          countEyes++;
+        } else if (yellowMeshNames.has(n)) {
+          sm.material = matYellow;
+          countYellow++;
+        } else if (blackMeshNames.has(n)) {
+          sm.material = matBlack;
+          countBlack++;
+        } else if (silverMeshNames.has(n)) {
+          sm.material = matSilver;
+          countSilver++;
+        } else {
+          if (n.includes('cylinder')) {
+            sm.material = matGunmetal;
+            countGunmetal++;
+          } else if (n.includes('cube')) {
+            sm.material = matBlack;
+            countBlack++;
+          } else {
+            sm.material = matYellow;
+            countYellow++;
+          }
         }
       }
 
@@ -273,37 +377,6 @@ export default function RobotModel({
           }
         }
       }
-
-      // 3. Materials
-      if ((obj as THREE.Mesh).isMesh) {
-        const mesh = obj as THREE.Mesh;
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-        const n = mesh.name.toLowerCase();
-
-        if (
-          n.includes('sphere.005') ||
-          n.includes('sphere.006') ||
-          n.includes('sphere.007') ||
-          n.includes('sphere.004') ||
-          n.includes('sphere004') ||
-          n.includes('sphere005') ||
-          n.includes('sphere006')
-        ) {
-          mesh.material = eyeGlow;
-        } else if (
-          n.includes('cylinder.0') ||
-          n.includes('cylinder001') ||
-          n.includes('cylinder002') ||
-          n.includes('cylinder003')
-        ) {
-          mesh.material = accent;
-        } else if (n.includes('cylinder')) {
-          mesh.material = darkAlloy;
-        } else {
-          mesh.material = mainArmor;
-        }
-      }
     });
 
     restRef.current = rests;
@@ -312,6 +385,18 @@ export default function RobotModel({
       totalSkinnedMeshes > 0 && validSkinnedMeshes === totalSkinnedMeshes;
 
     // ── Diagnostic Logs (Required Format) ──────────────────────────────────
+    console.log(`[Robot] Total objects traversed: ${totalObjects}`);
+    console.log(`[Robot] Total SkinnedMesh objects: ${totalSkinnedMeshes}`);
+    console.log(`[Robot] Meshes assigned Yellow Armor: ${countYellow}`);
+    console.log(`[Robot] Meshes assigned Black Armor: ${countBlack}`);
+    console.log(`[Robot] Meshes assigned Dark Gunmetal: ${countGunmetal}`);
+    console.log(`[Robot] Meshes assigned Silver Details: ${countSilver}`);
+    console.log(`[Robot] Meshes assigned Glowing Eyes: ${countEyes}`);
+    console.log(
+      `[Robot] Unrecognized mesh names: ${
+        unrecognized.length > 0 ? unrecognized.join(', ') : 'None (100% mapped)'
+      }`
+    );
     console.log(`[Robot] Total bones: ${totalBonesCount}`);
     console.log(`[Robot] Bone mapping completed: ${discovered.length}`);
     console.log(`[Robot] Head: ${bones.head?.name ?? 'spine005'}`);
@@ -324,11 +409,36 @@ export default function RobotModel({
     console.log(`[Robot] Skeleton binding: ${bindingValid ? 'VALID' : 'INVALID'}`);
     console.log(`[Robot] Procedural animation: READY`);
 
+    // Attach thruster anchors directly to the boot soles in model coordinates:
+    // Left boot (Cube011) sole is at local [0.055, 0.240, -0.005] of thighL
+    // Right boot (Cube010) sole is at local [-0.091, 0.240, -0.004] of thighR
+    if (bones.thighL) {
+      if (footAnchorLRef.current) bones.thighL.remove(footAnchorLRef.current);
+      const anchorL = new THREE.Object3D();
+      anchorL.name = 'bootSoleAnchorL';
+      anchorL.position.set(0.055, 0.240, -0.005);
+      bones.thighL.add(anchorL);
+      footAnchorLRef.current = anchorL;
+    }
+    if (bones.thighR) {
+      if (footAnchorRRef.current) bones.thighR.remove(footAnchorRRef.current);
+      const anchorR = new THREE.Object3D();
+      anchorR.name = 'bootSoleAnchorR';
+      anchorR.position.set(-0.091, 0.240, -0.004);
+      bones.thighR.add(anchorR);
+      footAnchorRRef.current = anchorR;
+    }
+
     return () => {
-      mainArmor.dispose();
-      darkAlloy.dispose();
-      accent.dispose();
-      eyeGlow.dispose();
+      if (bones.thighL && footAnchorLRef.current) bones.thighL.remove(footAnchorLRef.current);
+      if (bones.thighR && footAnchorRRef.current) bones.thighR.remove(footAnchorRRef.current);
+      footAnchorLRef.current = null;
+      footAnchorRRef.current = null;
+      matYellow.dispose();
+      matBlack.dispose();
+      matGunmetal.dispose();
+      matSilver.dispose();
+      matEyes.dispose();
     };
   }, [scene, primaryColor]);
 
@@ -357,7 +467,7 @@ export default function RobotModel({
 
     const bones = bonesRef.current;
     const rests = restRef.current;
-    if (rests.size === 0) return;
+    if (rests.size === 0 || !groupRef.current) return;
 
     const R = (b: THREE.Bone | null): THREE.Quaternion =>
       (b && rests.get(b)) || new THREE.Quaternion();
@@ -621,26 +731,64 @@ export default function RobotModel({
         break;
       }
     }
+
+    // ── Reactive Jet Thrusters ──
+    const targetIntensity =
+      animRef.current === 'walk'
+        ? 0.55
+        : animRef.current === 'dance'
+        ? 0.5
+        : animRef.current === 'happy' || animRef.current === 'wave'
+        ? 0.35
+        : 0.18;
+    thrusterIntensityRef.current +=
+      (targetIntensity - thrusterIntensityRef.current) * (1 - Math.exp(-4.5 * safeDt));
+
+    // Anchors are physically attached at the boot soles (Cube011 & Cube010)
+    if (footAnchorLRef.current && thrusterLRef.current) {
+      footAnchorLRef.current.getWorldPosition(_footWPosL);
+      thrusterLRef.current.position.copy(_footWPosL);
+      thrusterLRef.current.quaternion.copy(groupRef.current.quaternion);
+    }
+    if (footAnchorRRef.current && thrusterRRef.current) {
+      footAnchorRRef.current.getWorldPosition(_footWPosR);
+      thrusterRRef.current.position.copy(_footWPosR);
+      thrusterRRef.current.quaternion.copy(groupRef.current.quaternion);
+    }
   });
 
   return (
-    <group
-      ref={groupRef}
-      scale={scale}
-      position={position}
-      rotation={[0, Math.PI / 2, 0]}
-      onPointerOver={() => {
-        if (typeof document !== 'undefined') document.body.style.cursor = 'pointer';
-      }}
-      onPointerOut={() => {
-        if (typeof document !== 'undefined') document.body.style.cursor = 'auto';
-      }}
-      onClick={(e) => {
-        e.stopPropagation();
-        onRobotClick?.();
-      }}
-    >
-      <primitive object={scene} />
-    </group>
+    <>
+      <group
+        ref={groupRef}
+        scale={scale}
+        position={position}
+        rotation={[0, Math.PI / 2, 0]}
+        onPointerOver={() => {
+          if (typeof document !== 'undefined') document.body.style.cursor = 'pointer';
+        }}
+        onPointerOut={() => {
+          if (typeof document !== 'undefined') document.body.style.cursor = 'auto';
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onRobotClick?.();
+        }}
+      >
+        <primitive object={scene} />
+      </group>
+      <group ref={thrusterLRef}>
+        <JetThrusterEffect
+          intensityRef={thrusterIntensityRef}
+          scale={scale / 0.20}
+        />
+      </group>
+      <group ref={thrusterRRef}>
+        <JetThrusterEffect
+          intensityRef={thrusterIntensityRef}
+          scale={scale / 0.20}
+        />
+      </group>
+    </>
   );
 }

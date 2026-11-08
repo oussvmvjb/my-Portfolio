@@ -1,26 +1,27 @@
 'use client';
 
 /**
- * FloatingRobot.tsx — Global Floating 3D Robot Companion (Nexus-01)
+ * FloatingRobot.tsx — Global Floating 3D Robot Companion (Nexus-01 / Bumblebee)
  *
- * Requirements:
- * - Mounted once in root layout, persistent across page navigations.
- * - Full-screen transparent overlay with `pointer-events: none` so website
- *   remains 100% interactive (no clicks or scrolls blocked).
- * - Small companion size (12-20% of viewport height).
- * - Autonomous procedural wandering, gestures (wave, think, happy, look around).
- * - Dynamic scroll reaction (flies, banks, follows visitor down/up the page).
- * - Attention modes (follows cursor, ignores, gets curious, gets distracted).
- * - Operates directly on the 29 Blender bones of ROBOT.glb.
+ * Style:
+ * - Premium automotive yellow & glossy black transforming robot inspired by Bumblebee.
+ * - Clearcoat metallic yellow primary armor.
+ * - Deep glossy black secondary armor plates.
+ * - Dark mechanical gunmetal joints, hinges, and hands.
+ * - Metallic silver pistons, collar, and actuator rings.
+ * - Electric cyan/blue glowing eyes.
+ * - Positioned at TOP-LEFT of the app as an autonomous 3D companion.
+ * - 100% pointer-events pass-through overlay.
  */
 
-import React, { useRef, useEffect, useState, useMemo } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { useTheme } from '@/lib/theme/ThemeProvider';
+import JetThrusterEffect from './JetThrusterEffect';
 
-// ─── Bone Map (all 29 GLB joints) ─────────────────────────────────────────────
+// ─── Bone Map (29 confirmed GLB joints) ─────────────────────────────────────────
 interface BoneMap {
   spine: THREE.Bone | null;
   pelvisL: THREE.Bone | null;
@@ -138,15 +139,30 @@ function CompanionModel({
 
   const restRef = useRef<Map<THREE.Bone, THREE.Quaternion>>(new Map());
 
+  // ── Jet Thruster refs ────────────────────────────────────────────────────────
+  const thrusterLRef = useRef<THREE.Group>(null);
+  const thrusterRRef = useRef<THREE.Group>(null);
+  // Anchors attached directly to the boot soles in model coordinates
+  const footAnchorLRef = useRef<THREE.Object3D | null>(null);
+  const footAnchorRRef = useRef<THREE.Object3D | null>(null);
+  // Shared intensity ref (0.0–1.0) — written in useFrame, read by JetThrusterEffect
+  const thrusterIntensityRef = useRef<number>(0.2);
+  // Stable cached vectors (useRef so they're not recreated on render)
+  const _footWPosL = useRef(new THREE.Vector3()).current;
+  const _footWPosR = useRef(new THREE.Vector3()).current;
+  const _downVec = useRef(new THREE.Vector3()).current;
+
   // ── Physics Position & Spatial Target ──
-  // Current 3D position of companion in world units
+  // Starts at TOP-RIGHT of the viewport
   const initializedRef = useRef(false);
-  const currentPosRef = useRef(new THREE.Vector3(2.2, -1.3, 0));
-  const targetPosRef = useRef(new THREE.Vector3(2.2, -1.3, 0));
-  const currentVelRef = useRef(new THREE.Vector3(0, 0, 0));
+  const currentPosRef = useRef(new THREE.Vector3(2.2, 1.4, 0));
+  const targetPosRef = useRef(new THREE.Vector3(2.2, 1.4, 0));
 
   // Current body rotation (facing + banking)
-  const baseRotY = Math.PI / 2; // +90 deg cancels Blender -90 deg export
+  // Base orientation: Math.PI / 2 faces straight forward.
+  // Subtracting an angle rotates the robot toward the left (inward toward the page content).
+  // Increase the subtracted angle (e.g. - 0.6) to turn more left, or decrease to turn back right.
+  const baseRotY = Math.PI / 2 - 1.10;
   const bodyRotRef = useRef({ x: 0, y: baseRotY, z: 0 });
 
   // ── Behavior State Machine ──
@@ -170,41 +186,69 @@ function CompanionModel({
     cooldowns: {},
   });
 
-  // Base scale (small companion, 12-20% viewport height)
+  // Small companion scale (occupies 12-20% viewport height on desktop, smaller on mobile)
   const modelScale = isMobile ? 0.15 : 0.20;
 
-  // ── Bone Discovery & Materials Setup ──
+  // ── Bumblebee Material Assignment & Bone Discovery ───────────────────────────
   useEffect(() => {
     if (!scene) return;
 
-    const mainArmor = new THREE.MeshStandardMaterial({
-      color: new THREE.Color('#1e2330'),
-      roughness: 0.28,
-      metalness: 0.85,
+    // ── 1. Premium Automotive Materials Palette ──
+    // Vibrant clearcoat Bumblebee yellow
+    const matYellow = new THREE.MeshPhysicalMaterial({
+      color: new THREE.Color('#FFBE00'),
+      metalness: 0.65,
+      roughness: 0.22,
+      clearcoat: 0.95,
+      clearcoatRoughness: 0.14,
+      reflectivity: 0.9,
     });
-    const darkAlloy = new THREE.MeshStandardMaterial({
-      color: new THREE.Color('#0d1117'),
-      roughness: 0.45,
-      metalness: 0.95,
+
+    // Deep glossy black secondary armor / carbon accents
+    const matBlack = new THREE.MeshPhysicalMaterial({
+      color: new THREE.Color('#131518'),
+      metalness: 0.78,
+      roughness: 0.26,
+      clearcoat: 0.85,
+      clearcoatRoughness: 0.18,
     });
-    const accent = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(primaryColor),
-      roughness: 0.2,
-      metalness: 0.7,
-      emissive: new THREE.Color(primaryColor),
-      emissiveIntensity: 0.5,
+
+    // Dark mechanical gunmetal for joints & internal mechanics
+    const matGunmetal = new THREE.MeshStandardMaterial({
+      color: new THREE.Color('#2A2E35'),
+      metalness: 0.92,
+      roughness: 0.36,
     });
-    const eyeGlow = new THREE.MeshStandardMaterial({
-      color: new THREE.Color('#38bdf8'),
-      roughness: 0.08,
-      metalness: 0.0,
-      emissive: new THREE.Color('#38bdf8'),
-      emissiveIntensity: 2.2,
+
+    // Polished metallic silver for pistons, collar, and actuator rings
+    const matSilver = new THREE.MeshStandardMaterial({
+      color: new THREE.Color('#B2BDC8'),
+      metalness: 0.96,
+      roughness: 0.18,
+    });
+
+    // Glowing cyan/blue electric optics
+    const matEyes = new THREE.MeshStandardMaterial({
+      color: new THREE.Color('#00CFFF'),
+      emissive: new THREE.Color('#00B4FF'),
+      emissiveIntensity: 2.8,
+      roughness: 0.04,
+      metalness: 0.05,
+    });
+
+    // Subtle warm yellow emissive micro-circuits
+    const matYellowAccent = new THREE.MeshStandardMaterial({
+      color: new THREE.Color('#FFBE00'),
+      emissive: new THREE.Color('#FF9900'),
+      emissiveIntensity: 0.6,
+      roughness: 0.25,
+      metalness: 0.8,
     });
 
     const bones = bonesRef.current;
     const rests = new Map<THREE.Bone, THREE.Quaternion>();
 
+    // Bone mapping (case-normalized)
     const nameMap: Record<string, (keyof BoneMap)[]> = {
       spine: ['spine'],
       pelvisl: ['pelvisL'],
@@ -237,7 +281,71 @@ function CompanionModel({
       toer: ['toeR'],
     };
 
+    // Material classification rules for Bumblebee aesthetics
+    const yellowMeshNames = new Set([
+      'sphere',                  // Helmet top / crown
+      'cube.012', 'cube012',     // Dominant broad chest armor
+      'cylinder.003', 'cylinder003', // Shoulder armor discs
+      'cylinder.005', 'cylinder005',
+      'cylinder.008', 'cylinder008', // Upper arm bicep armor
+      'cylinder.009', 'cylinder009',
+      'cylinder.016', 'cylinder016', // Forearm gauntlets
+      'cylinder.017', 'cylinder017',
+      'cube.005', 'cube005',     // Lower pelvis plate
+      'cube.001', 'cube001',     // Thigh armor
+      'sphere.003', 'sphere003', // Knee armor caps
+      'sphere.004', 'sphere004',
+      'cylinder.012', 'cylinder012', // Shin armor plates
+      'cylinder.013', 'cylinder013',
+    ]);
+
+    const blackMeshNames = new Set([
+      'cylinder.025', 'cylinder025', // Head/neck cowl faceplate
+      'cube.015', 'cube015',     // Chest center intake / chevron
+      'cube.002', 'cube002',     // Spine backplate
+      'sphere.001', 'sphere001', // Shoulder joint ball caps
+      'sphere.002', 'sphere002',
+      'cube.003', 'cube003',     // Hip armor guards
+      'cube.013', 'cube013',
+      'cube.006', 'cube006',     // Hand backplates
+      'cube.008', 'cube008',
+      'cube.010', 'cube010',     // Feet / boots
+      'cube.011', 'cube011',
+    ]);
+
+    const silverMeshNames = new Set([
+      'cylinder',                // Neck collar ring
+      'cylinder.010', 'cylinder010', // Spine hydraulic pistons
+      'cylinder.018', 'cylinder018', // Wrist connectors
+      'cylinder.019', 'cylinder019',
+      'cylinder.020', 'cylinder020', // Knee pivot discs
+      'cylinder.021', 'cylinder021',
+      'cylinder.022', 'cylinder022', // Hip pivot rings
+      'cylinder.023', 'cylinder023',
+    ]);
+
+    const eyeMeshNames = new Set([
+      'sphere.005', 'sphere005', // Optical eyes
+      'sphere.006', 'sphere006',
+      'sphere.007', 'sphere007',
+      'sphere.004', 'sphere004',
+    ]);
+
+    // Diagnostics counters
+    let totalObjects = 0;
+    let totalSkinnedMeshes = 0;
+    let countYellow = 0;
+    let countBlack = 0;
+    let countGunmetal = 0;
+    let countSilver = 0;
+    let countEyes = 0;
+    const unrecognized: string[] = [];
+
+    // Traverse scene and assign materials to EVERY SkinnedMesh individually
     scene.traverse((obj) => {
+      totalObjects++;
+
+      // 1. Capture bones
       if ((obj as THREE.Bone).isBone) {
         const bone = obj as THREE.Bone;
         rests.set(bone, bone.quaternion.clone());
@@ -250,51 +358,101 @@ function CompanionModel({
         }
       }
 
-      if ((obj as THREE.Mesh).isMesh) {
-        const mesh = obj as THREE.Mesh;
+      // 2. SkinnedMesh Material Assignment
+      if ((obj as THREE.SkinnedMesh).isSkinnedMesh) {
+        totalSkinnedMeshes++;
+        const mesh = obj as THREE.SkinnedMesh;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+
         const n = mesh.name.toLowerCase();
 
-        if (
-          n.includes('sphere.005') ||
-          n.includes('sphere.006') ||
-          n.includes('sphere.007') ||
-          n.includes('sphere.004') ||
-          n.includes('sphere004') ||
-          n.includes('sphere005') ||
-          n.includes('sphere006')
-        ) {
-          mesh.material = eyeGlow;
-        } else if (
-          n.includes('cylinder.0') ||
-          n.includes('cylinder001') ||
-          n.includes('cylinder002') ||
-          n.includes('cylinder003')
-        ) {
-          mesh.material = accent;
-        } else if (n.includes('cylinder')) {
-          mesh.material = darkAlloy;
+        // Exact rule matching
+        if (eyeMeshNames.has(n)) {
+          mesh.material = matEyes;
+          countEyes++;
+        } else if (yellowMeshNames.has(n)) {
+          mesh.material = matYellow;
+          countYellow++;
+        } else if (blackMeshNames.has(n)) {
+          mesh.material = matBlack;
+          countBlack++;
+        } else if (silverMeshNames.has(n)) {
+          mesh.material = matSilver;
+          countSilver++;
         } else {
-          mesh.material = mainArmor;
+          // Fallback / default rule:
+          // Cylinders not explicitly matched are mechanical linkage (gunmetal)
+          // Cubes not explicitly matched are secondary armor (black)
+          // Spheres are yellow
+          if (n.includes('cylinder')) {
+            mesh.material = matGunmetal;
+            countGunmetal++;
+          } else if (n.includes('cube')) {
+            mesh.material = matBlack;
+            countBlack++;
+          } else {
+            mesh.material = matYellow;
+            countYellow++;
+          }
         }
       }
     });
 
     restRef.current = rests;
 
+    // Attach thruster anchors directly to the boot soles in model coordinates:
+    // Left boot (Cube011) sole is at local [0.055, 0.240, -0.005] of thighL
+    // Right boot (Cube010) sole is at local [-0.091, 0.240, -0.004] of thighR
+    if (bones.thighL) {
+      if (footAnchorLRef.current) bones.thighL.remove(footAnchorLRef.current);
+      const anchorL = new THREE.Object3D();
+      anchorL.name = 'bootSoleAnchorL';
+      anchorL.position.set(0.055, 0.240, -0.005);
+      bones.thighL.add(anchorL);
+      footAnchorLRef.current = anchorL;
+    }
+    if (bones.thighR) {
+      if (footAnchorRRef.current) bones.thighR.remove(footAnchorRRef.current);
+      const anchorR = new THREE.Object3D();
+      anchorR.name = 'bootSoleAnchorR';
+      anchorR.position.set(-0.091, 0.240, -0.004);
+      bones.thighR.add(anchorR);
+      footAnchorRRef.current = anchorR;
+    }
+
+    // ── Diagnostic Logs (Required Format) ──
+    console.log(`[Robot] Total objects traversed: ${totalObjects}`);
+    console.log(`[Robot] Total SkinnedMesh objects: ${totalSkinnedMeshes}`);
+    console.log(`[Robot] Meshes assigned Yellow Armor: ${countYellow}`);
+    console.log(`[Robot] Meshes assigned Black Armor: ${countBlack}`);
+    console.log(`[Robot] Meshes assigned Dark Gunmetal: ${countGunmetal}`);
+    console.log(`[Robot] Meshes assigned Silver Details: ${countSilver}`);
+    console.log(`[Robot] Meshes assigned Glowing Eyes: ${countEyes}`);
+    console.log(
+      `[Robot] Unrecognized mesh names: ${unrecognized.length > 0 ? unrecognized.join(', ') : 'None (100% mapped)'
+      }`
+    );
+
     return () => {
-      mainArmor.dispose();
-      darkAlloy.dispose();
-      accent.dispose();
-      eyeGlow.dispose();
+      if (bones.thighL && footAnchorLRef.current) bones.thighL.remove(footAnchorLRef.current);
+      if (bones.thighR && footAnchorRRef.current) bones.thighR.remove(footAnchorRRef.current);
+      footAnchorLRef.current = null;
+      footAnchorRRef.current = null;
+      matYellow.dispose();
+      matBlack.dispose();
+      matGunmetal.dispose();
+      matSilver.dispose();
+      matEyes.dispose();
+      matYellowAccent.dispose();
     };
   }, [scene, primaryColor]);
 
-  // ── Main Frame Update ───────────────────────────────────────────────────────
+  // ── Main Frame Loop ─────────────────────────────────────────────────────────
   useFrame((_, delta) => {
-    // Pause animation when tab is inactive to preserve GPU/battery
+    // Suspend updates if document tab is hidden to save battery
     if (typeof document !== 'undefined' && document.hidden) return;
 
-    // Avoid large time jumps on background tab resume
     const safeDt = Math.min(delta, 0.05);
     const wallT = performance.now() * 0.001;
 
@@ -309,18 +467,18 @@ function CompanionModel({
     const halfW = viewport.width / 2;
     const halfH = viewport.height / 2;
 
-    // Default companion home anchor (bottom-right area)
+    // ── HOME ANCHOR: TOP-RIGHT OF THE VIEWPORT ──
     const homeX = isMobile ? halfW * 0.65 : halfW * 0.72;
-    const homeY = isMobile ? -halfH * 0.62 : -halfH * 0.52;
+    const homeY = isMobile ? halfH * 0.68 : halfH * 0.60;
 
-    // First frame initialization to home anchor
+    // Initial position on frame 0
     if (!initializedRef.current) {
       initializedRef.current = true;
       currentPosRef.current.set(homeX, homeY, 0);
       targetPosRef.current.set(homeX, homeY, 0);
     }
 
-    // Decay cooldowns
+    // Decay timers & cooldowns
     const state = stateRef.current;
     state.elapsed += safeDt;
     state.attentionElapsed += safeDt;
@@ -331,7 +489,7 @@ function CompanionModel({
       if (state.cooldowns[k] <= 0) delete state.cooldowns[k];
     });
 
-    // ── 1. Scroll-Following & Flying Detection ──
+    // ── 1. Scroll Detection & Flight Reaction ──
     const scroll = scrollRef.current;
     const isScrollingFast = Math.abs(scroll.velocity) > 120;
 
@@ -341,24 +499,20 @@ function CompanionModel({
       state.duration = 2.5;
     }
 
-    // Decay scroll velocity smoothly
     scroll.velocity *= Math.exp(-3.5 * safeDt);
 
     // ── 2. Behavior State Machine Scheduling ──
     if (state.elapsed >= state.duration) {
       state.elapsed = 0;
 
-      // Choose next behavior
       if (state.current === 'flying' && !isScrollingFast) {
         state.current = 'idle';
         state.duration = 3.5 + Math.random() * 2.5;
         targetPosRef.current.set(homeX, homeY, 0);
       } else if (state.current !== 'idle') {
-        // Return to idle / floating
         state.current = Math.random() > 0.4 ? 'idle' : 'floating';
         state.duration = 3.0 + Math.random() * 3.0;
       } else {
-        // From idle, randomly select a gesture or excursion
         const roll = Math.random();
         if (roll < 0.22 && !state.cooldowns['wave']) {
           state.current = 'wave';
@@ -376,13 +530,13 @@ function CompanionModel({
           state.current = 'lookAround';
           state.duration = 4.0;
         } else if (!reducedMotion) {
-          // Autonomous wander across the screen!
+          // Autonomous excursion from top-right across the screen
           state.current = 'floating';
           state.duration = 5.0 + Math.random() * 3.0;
 
-          // Pick a random waypoint within comfortable screen bounds
-          const wanderX = (Math.random() * 1.4 - 0.7) * (halfW * 0.75);
-          const wanderY = (Math.random() * 1.2 - 0.6) * (halfH * 0.65);
+          // Waypoints anchored around upper half & right side
+          const wanderX = halfW * 0.3 + (Math.random() * 1.0 - 0.5) * (halfW * 0.8);
+          const wanderY = halfH * 0.4 + (Math.random() * 0.8 - 0.4) * (halfH * 0.6);
           targetPosRef.current.set(wanderX, wanderY, 0);
         } else {
           state.current = 'idle';
@@ -391,7 +545,7 @@ function CompanionModel({
       }
     }
 
-    // ── 3. Attention Mode Cycling (Mouse reaction) ──
+    // ── 3. Attention Mode Cycling ──
     if (state.attentionElapsed >= state.attentionDuration) {
       state.attentionElapsed = 0;
       state.attentionDuration = 5.0 + Math.random() * 5.0;
@@ -408,53 +562,47 @@ function CompanionModel({
       }
     }
 
-    // ── 4. Spatial Position & Physics (Smooth Flight & Hover) ──
+    // ── 4. Spatial Position & Physics ──
     if (state.current === 'idle') {
-      // Return towards home anchor
       targetPosRef.current.set(homeX, homeY, 0);
     } else if (state.current === 'flying') {
-      // During scroll-flight, companion reacts to scroll direction & velocity
+      // Dips or swoops down when visitor scrolls down, rises when scrolling up
       const scrollShiftY = THREE.MathUtils.clamp(
         -scroll.direction * (Math.abs(scroll.velocity) * 0.002),
-        -1.2,
-        1.2
+        -1.3,
+        1.3
       );
-      // Small lateral sweep while flying
-      const lateralShiftX = Math.sin(wallT * 3.5) * 0.4;
+      const lateralShiftX = Math.sin(wallT * 3.5) * 0.45;
       targetPosRef.current.set(homeX + lateralShiftX, homeY + scrollShiftY, 0);
     }
 
-    // Add gentle organic hovering float to target
-    const hoverY = Math.sin(wallT * 2.0) * 0.07;
-    const hoverX = Math.cos(wallT * 1.3) * 0.04;
+    // Gentle hover bobbing
+    const hoverY = Math.sin(wallT * 2.0) * 0.065;
+    const hoverX = Math.cos(wallT * 1.3) * 0.035;
     const finalTarget = new THREE.Vector3(
       targetPosRef.current.x + hoverX,
       targetPosRef.current.y + hoverY,
       targetPosRef.current.z
     );
 
-    // Spring damping interpolation to finalTarget
     const posLerp = state.current === 'flying' ? 5.5 : 3.0;
     currentPosRef.current.lerp(finalTarget, 1 - Math.exp(-posLerp * safeDt));
-
-    // Update group position
     groupRef.current.position.copy(currentPosRef.current);
 
-    // ── 5. Body Rotation & Banking ──
-    // Determine movement direction for aerodynamic tilt
+    // ── 5. Body Rotation & Aerodynamic Banking ──
     const velX = (finalTarget.x - currentPosRef.current.x) * 3;
     const velY = (finalTarget.y - currentPosRef.current.y) * 3;
 
-    // Banking roll when moving sideways: bank into turn
+    // Bank into lateral curves
     const bankZ = THREE.MathUtils.clamp(-velX * 0.25, -0.35, 0.35);
 
-    // Pitch forward when flying or moving down
+    // Pitch forward when flying
     let pitchX = THREE.MathUtils.clamp(velY * 0.18, -0.35, 0.45);
     if (state.current === 'flying') {
-      pitchX += 0.25; // aerodynamic flight lean
+      pitchX += 0.25;
     }
 
-    // Yaw: face forward + slight orientation towards cursor if in follow mode
+    // Yaw: facing forward + slight cursor follow
     const ptr = pointerRef.current;
     let targetYaw = baseRotY;
     if (state.attention === 'follow') {
@@ -478,7 +626,7 @@ function CompanionModel({
       slerpBone(bones.spine001, R(bones.spine001), localDelta(_axisX, breath), 3, safeDt);
     }
 
-    // ── 7. Head & Neck Tracking (Attention-Driven) ──
+    // ── 7. Head & Neck Attention Tracking ──
     const hasHeadGesture =
       state.current === 'thinking' ||
       state.current === 'happy' ||
@@ -495,12 +643,11 @@ function CompanionModel({
       } else if (state.attention === 'curious') {
         yaw = THREE.MathUtils.clamp(ptr.x * 0.5, -0.5, 0.5);
         pitch = THREE.MathUtils.clamp(-ptr.y * 0.3, -0.3, 0.25);
-        roll = 0.25; // curious head tilt
+        roll = 0.25; // inquisitive head tilt
       } else if (state.attention === 'distracted') {
         yaw = Math.sin(wallT * 0.9) * 0.45;
         pitch = -0.15;
       } else {
-        // ignore — look straight ahead with idle nod
         pitch = Math.sin(wallT * 1.4) * 0.03;
       }
 
@@ -523,7 +670,6 @@ function CompanionModel({
     const t = state.elapsed;
 
     switch (state.current) {
-      // ── IDLE / FLOATING ────────────────────────────────────────────────────
       case 'idle':
       case 'floating': {
         const armSway = Math.sin(wallT * 1.4) * 0.06;
@@ -537,7 +683,6 @@ function CompanionModel({
         if (bones.handL) restoreBone(bones.handL, R(bones.handL), 3.5, safeDt);
         if (bones.handR) restoreBone(bones.handR, R(bones.handR), 3.5, safeDt);
 
-        // Legs relax naturally
         if (bones.thighL) restoreBone(bones.thighL, R(bones.thighL), 3, safeDt);
         if (bones.thighR) restoreBone(bones.thighR, R(bones.thighR), 3, safeDt);
         if (bones.shinL) restoreBone(bones.shinL, R(bones.shinL), 3, safeDt);
@@ -545,9 +690,7 @@ function CompanionModel({
         break;
       }
 
-      // ── FLYING (Scroll reaction / sprint) ──────────────────────────────────
       case 'flying': {
-        // Legs stream backward aerodynamically
         if (bones.thighL)
           slerpBone(bones.thighL, R(bones.thighL), localDelta(_axisX, -0.45), 6, safeDt);
         if (bones.thighR)
@@ -557,7 +700,6 @@ function CompanionModel({
         if (bones.shinR)
           slerpBone(bones.shinR, R(bones.shinR), localDelta(_axisX, 0.4), 6, safeDt);
 
-        // Arms trail back slightly
         if (bones.upperArmL)
           slerpBone(bones.upperArmL, R(bones.upperArmL), localDelta(_axisX, -0.3), 5, safeDt);
         if (bones.upperArmR)
@@ -570,42 +712,31 @@ function CompanionModel({
         break;
       }
 
-      // ── WAVE (Friendly greeting) ───────────────────────────────────────────
       case 'wave': {
-        // Raise right upper arm (local -Z)
         if (bones.upperArmR) {
           slerpBone(bones.upperArmR, R(bones.upperArmR), localDelta(_axisZ, -1.35), 6, safeDt);
         }
-        // Forearm bent up (local +X)
         if (bones.forearmR) {
           slerpBone(bones.forearmR, R(bones.forearmR), localDelta(_axisX, 1.25), 6, safeDt);
         }
-        // Hand waves back and forth
         if (bones.handR) {
           const wave = Math.sin(t * 8.5) * 0.6;
           slerpBone(bones.handR, R(bones.handR), localDelta(_axisZ, wave), 10, safeDt);
         }
 
-        // Left arm relaxed
         if (bones.upperArmL) restoreBone(bones.upperArmL, R(bones.upperArmL), 3, safeDt);
         if (bones.forearmL) restoreBone(bones.forearmL, R(bones.forearmL), 3, safeDt);
-
-        // Legs relaxed
-        if (bones.thighL) restoreBone(bones.thighL, R(bones.thighL), 3, safeDt);
-        if (bones.thighR) restoreBone(bones.thighR, R(bones.thighR), 3, safeDt);
         break;
       }
 
-      // ── THINKING ──────────────────────────────────────────────────────────
       case 'thinking': {
-        // Head tilted with contemplative nods
         if (bones.head) {
-          const thinkTilt = localDelta(_axisZ, 0.32)
-            .multiply(localDelta(_axisX, 0.12 + Math.sin(wallT * 2.2) * 0.04));
+          const thinkTilt = localDelta(_axisZ, 0.32).multiply(
+            localDelta(_axisX, 0.12 + Math.sin(wallT * 2.2) * 0.04)
+          );
           slerpBone(bones.head, R(bones.head), thinkTilt, 5, safeDt);
         }
 
-        // Right hand placed near chin
         if (bones.upperArmR) {
           const raise = localDelta(_axisZ, -0.65).multiply(localDelta(_axisX, 0.45));
           slerpBone(bones.upperArmR, R(bones.upperArmR), raise, 5, safeDt);
@@ -617,15 +748,12 @@ function CompanionModel({
           slerpBone(bones.handR, R(bones.handR), localDelta(_axisZ, 0.25), 5, safeDt);
         }
 
-        // Left arm relaxed
         if (bones.upperArmL) restoreBone(bones.upperArmL, R(bones.upperArmL), 3, safeDt);
         if (bones.forearmL) restoreBone(bones.forearmL, R(bones.forearmL), 3, safeDt);
         break;
       }
 
-      // ── HAPPY ─────────────────────────────────────────────────────────────
       case 'happy': {
-        // Both arms raised in celebration V
         if (bones.upperArmL)
           slerpBone(bones.upperArmL, R(bones.upperArmL), localDelta(_axisZ, 1.35), 6, safeDt);
         if (bones.upperArmR)
@@ -636,13 +764,11 @@ function CompanionModel({
         if (bones.forearmR)
           slerpBone(bones.forearmR, R(bones.forearmR), localDelta(_axisX, 0.5), 6, safeDt);
 
-        // Head raised cheerfully
         if (bones.head) {
           const cheerNod = Math.sin(t * 6.5) * 0.06;
           slerpBone(bones.head, R(bones.head), localDelta(_axisX, -0.22 + cheerNod), 7, safeDt);
         }
 
-        // Chest celebratory bounce
         if (bones.chest) {
           const cheer = Math.sin(t * 6.5) * 0.08;
           slerpBone(bones.chest, R(bones.chest), localDelta(_axisX, cheer), 7, safeDt);
@@ -650,9 +776,7 @@ function CompanionModel({
         break;
       }
 
-      // ── LOOK AROUND ───────────────────────────────────────────────────────
       case 'lookAround': {
-        // Head sweeps independently across the page
         if (bones.head) {
           const sweepYaw = Math.sin(t * 1.5) * 0.5;
           const sweepPitch = Math.sin(t * 0.8) * 0.2;
@@ -671,12 +795,52 @@ function CompanionModel({
         break;
       }
     }
+
+    // ── 9. Reactive Jet Thrusters ──
+    const targetIntensity =
+      state.current === 'flying'
+        ? 1.0
+        : state.current === 'floating'
+        ? 0.42
+        : state.current === 'happy' || state.current === 'wave'
+        ? 0.35
+        : 0.22;
+
+    thrusterIntensityRef.current +=
+      (targetIntensity - thrusterIntensityRef.current) * (1 - Math.exp(-4.5 * safeDt));
+
+    // Anchors are physically attached at the boot soles (Cube011 & Cube010)
+    if (footAnchorLRef.current && thrusterLRef.current) {
+      footAnchorLRef.current.getWorldPosition(_footWPosL);
+      thrusterLRef.current.position.copy(_footWPosL);
+      thrusterLRef.current.quaternion.copy(groupRef.current.quaternion);
+    }
+
+    if (footAnchorRRef.current && thrusterRRef.current) {
+      footAnchorRRef.current.getWorldPosition(_footWPosR);
+      thrusterRRef.current.position.copy(_footWPosR);
+      thrusterRRef.current.quaternion.copy(groupRef.current.quaternion);
+    }
   });
 
   return (
-    <group ref={groupRef} scale={modelScale}>
-      <primitive object={scene} />
-    </group>
+    <>
+      <group ref={groupRef} scale={modelScale}>
+        <primitive object={scene} />
+      </group>
+      <group ref={thrusterLRef}>
+        <JetThrusterEffect
+          intensityRef={thrusterIntensityRef}
+          reducedMotion={reducedMotion}
+        />
+      </group>
+      <group ref={thrusterRRef}>
+        <JetThrusterEffect
+          intensityRef={thrusterIntensityRef}
+          reducedMotion={reducedMotion}
+        />
+      </group>
+    </>
   );
 }
 
@@ -684,7 +848,6 @@ function CompanionModel({
 export default function FloatingRobot() {
   const { primary } = useTheme();
 
-  // Mouse & scroll tracking refs (no re-renders during 60fps loops)
   const pointerRef = useRef({ x: 0, y: 0, movedAt: 0 });
   const scrollRef = useRef({ velocity: 0, direction: 1, lastY: 0, lastTime: 0 });
 
@@ -695,7 +858,6 @@ export default function FloatingRobot() {
   useEffect(() => {
     setMounted(true);
 
-    // Reduced motion preference
     if (typeof window !== 'undefined') {
       const media = window.matchMedia('(prefers-reduced-motion: reduce)');
       setReducedMotion(media.matches);
@@ -706,15 +868,12 @@ export default function FloatingRobot() {
       checkMobile();
       window.addEventListener('resize', checkMobile);
 
-      // Window pointer tracking
       const handlePointerMove = (e: MouseEvent) => {
-        // Normalized device coordinates [-1, 1]
         const nx = (e.clientX / window.innerWidth) * 2 - 1;
         const ny = -(e.clientY / window.innerHeight) * 2 + 1;
         pointerRef.current = { x: nx, y: ny, movedAt: performance.now() };
       };
 
-      // Window scroll tracking
       const handleScroll = () => {
         const now = performance.now();
         const currentY = window.scrollY;
@@ -759,12 +918,17 @@ export default function FloatingRobot() {
         dpr={isMobile ? [1, 1.25] : [1, 1.5]}
         style={{ pointerEvents: 'none' }}
       >
-        {/* Balanced studio lighting tuned for transparent full-screen overlay */}
-        <ambientLight intensity={0.9} />
-        <directionalLight position={[5, 7, 5]} intensity={1.6} />
-        <directionalLight position={[-5, 4, -4]} intensity={2.0} color={primary} />
-        <pointLight position={[0, -3, 3]} intensity={0.6} color={primary} />
-        <pointLight position={[-3, 2, 4]} intensity={0.7} color="#93c5fd" />
+        {/* Studio Lighting tuned for metallic yellow and glossy black */}
+        <ambientLight intensity={1.1} />
+        {/* Key light shining down from top-right */}
+        <directionalLight position={[4, 7, 5]} intensity={2.0} />
+        {/* Secondary fill light from left */}
+        <directionalLight position={[-5, 4, 3]} intensity={1.2} color="#ffffff" />
+        {/* Warm automotive rim light */}
+        <directionalLight position={[2, -3, -4]} intensity={1.8} color="#FFBE00" />
+        {/* Cyan optical bounce light */}
+        <pointLight position={[3, 2, 4]} intensity={0.9} color="#00CFFF" />
+        <pointLight position={[-2, -2, 2]} intensity={0.5} color="#ffffff" />
 
         <CompanionModel
           primaryColor={primary}
