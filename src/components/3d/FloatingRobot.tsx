@@ -20,6 +20,9 @@ import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { useTheme } from '@/lib/theme/ThemeProvider';
 import JetThrusterEffect from './JetThrusterEffect';
+import { RobotIntroProvider, useRobotIntro, IntroPhase } from './RobotIntroContext';
+import RobotIntroOverlay from './RobotIntroOverlay';
+import { updateIntroChoreography } from './RobotIntroController';
 
 // ─── Bone Map (29 confirmed GLB joints) ─────────────────────────────────────────
 interface BoneMap {
@@ -139,6 +142,16 @@ function CompanionModel({
 
   const restRef = useRef<Map<THREE.Bone, THREE.Quaternion>>(new Map());
 
+  // ── Cinematic Intro State Hooks & Refs ───────────────────────────────────────
+  const { phase, setPhase, isAppReady } = useRobotIntro();
+  const introElapsedRef = useRef(0);
+  const prevPhaseRef = useRef<IntroPhase>(phase);
+  const matEyesRef = useRef<THREE.MeshStandardMaterial | null>(null);
+
+  // Responsive Scales: Hero size during intro, companion size when docked
+  const heroScale = isMobile ? 0.34 : 0.46;
+  const companionScale = isMobile ? 0.15 : 0.20;
+
   // ── Jet Thruster refs ────────────────────────────────────────────────────────
   const thrusterLRef = useRef<THREE.Group>(null);
   const thrusterRRef = useRef<THREE.Group>(null);
@@ -162,8 +175,8 @@ function CompanionModel({
   // Base orientation: Math.PI / 2 faces straight forward.
   // Subtracting an angle rotates the robot toward the left (inward toward the page content).
   // Increase the subtracted angle (e.g. - 0.6) to turn more left, or decrease to turn back right.
-  const baseRotY = Math.PI / 2 - 1.10;
-  const bodyRotRef = useRef({ x: 0, y: baseRotY, z: 0 });
+  const baseRotY = Math.PI / 2 - 0.45;
+  const bodyRotRef = useRef({ x: 0, y: phase === 'companionIdle' ? baseRotY : Math.PI / 2, z: 0 });
 
   // ── Behavior State Machine ──
   const stateRef = useRef<{
@@ -186,8 +199,8 @@ function CompanionModel({
     cooldowns: {},
   });
 
-  // Small companion scale (occupies 12-20% viewport height on desktop, smaller on mobile)
-  const modelScale = isMobile ? 0.15 : 0.20;
+  // Backward compatibility alias for companion model scale
+  const modelScale = companionScale;
 
   // ── Bumblebee Material Assignment & Bone Discovery ───────────────────────────
   useEffect(() => {
@@ -227,14 +240,15 @@ function CompanionModel({
       roughness: 0.18,
     });
 
-    // Glowing cyan/blue electric optics
+    // Glowing cyan/blue electric optics (starts unpowered during intro loading)
     const matEyes = new THREE.MeshStandardMaterial({
       color: new THREE.Color('#00CFFF'),
       emissive: new THREE.Color('#00B4FF'),
-      emissiveIntensity: 2.8,
+      emissiveIntensity: phase === 'companionIdle' ? 2.8 : 0.0,
       roughness: 0.04,
       metalness: 0.05,
     });
+    matEyesRef.current = matEyes;
 
     // Subtle warm yellow emissive micro-circuits
     const matYellowAccent = new THREE.MeshStandardMaterial({
@@ -471,343 +485,401 @@ function CompanionModel({
     const homeX = isMobile ? halfW * 0.65 : halfW * 0.72;
     const homeY = isMobile ? halfH * 0.68 : halfH * 0.60;
 
+    // Track phase change & reset intro timer
+    if (prevPhaseRef.current !== phase) {
+      prevPhaseRef.current = phase;
+      introElapsedRef.current = 0;
+    }
+    introElapsedRef.current += safeDt;
+
     // Initial position on frame 0
     if (!initializedRef.current) {
       initializedRef.current = true;
-      currentPosRef.current.set(homeX, homeY, 0);
-      targetPosRef.current.set(homeX, homeY, 0);
-    }
-
-    // Decay timers & cooldowns
-    const state = stateRef.current;
-    state.elapsed += safeDt;
-    state.attentionElapsed += safeDt;
-    state.nextWander -= safeDt;
-
-    Object.keys(state.cooldowns).forEach((k) => {
-      state.cooldowns[k] -= safeDt;
-      if (state.cooldowns[k] <= 0) delete state.cooldowns[k];
-    });
-
-    // ── 1. Scroll Detection & Flight Reaction ──
-    const scroll = scrollRef.current;
-    const isScrollingFast = Math.abs(scroll.velocity) > 120;
-
-    if (isScrollingFast && state.current !== 'flying' && !reducedMotion) {
-      state.current = 'flying';
-      state.elapsed = 0;
-      state.duration = 2.5;
-    }
-
-    scroll.velocity *= Math.exp(-3.5 * safeDt);
-
-    // ── 2. Behavior State Machine Scheduling ──
-    if (state.elapsed >= state.duration) {
-      state.elapsed = 0;
-
-      if (state.current === 'flying' && !isScrollingFast) {
-        state.current = 'idle';
-        state.duration = 3.5 + Math.random() * 2.5;
+      if (phase === 'companionIdle') {
+        currentPosRef.current.set(homeX, homeY, 0);
         targetPosRef.current.set(homeX, homeY, 0);
-      } else if (state.current !== 'idle') {
-        state.current = Math.random() > 0.4 ? 'idle' : 'floating';
-        state.duration = 3.0 + Math.random() * 3.0;
+        groupRef.current.scale.setScalar(companionScale);
       } else {
-        const roll = Math.random();
-        if (roll < 0.22 && !state.cooldowns['wave']) {
-          state.current = 'wave';
-          state.duration = 3.2;
-          state.cooldowns['wave'] = 14.0;
-        } else if (roll < 0.42 && !state.cooldowns['thinking']) {
-          state.current = 'thinking';
-          state.duration = 3.8;
-          state.cooldowns['thinking'] = 16.0;
-        } else if (roll < 0.58 && !state.cooldowns['happy']) {
-          state.current = 'happy';
-          state.duration = 3.2;
-          state.cooldowns['happy'] = 18.0;
-        } else if (roll < 0.78) {
-          state.current = 'lookAround';
-          state.duration = 4.0;
-        } else if (!reducedMotion) {
-          // Autonomous excursion from top-right across the screen
-          state.current = 'floating';
-          state.duration = 5.0 + Math.random() * 3.0;
-
-          // Waypoints anchored around upper half & right side
-          const wanderX = halfW * 0.3 + (Math.random() * 1.0 - 0.5) * (halfW * 0.8);
-          const wanderY = halfH * 0.4 + (Math.random() * 0.8 - 0.4) * (halfH * 0.6);
-          targetPosRef.current.set(wanderX, wanderY, 0);
-        } else {
-          state.current = 'idle';
-          state.duration = 4.0;
-        }
+        currentPosRef.current.set(0, 3.0, -1.8);
+        targetPosRef.current.set(0, 3.0, -1.8);
+        groupRef.current.scale.setScalar(heroScale);
       }
     }
 
-    // ── 3. Attention Mode Cycling ──
-    if (state.attentionElapsed >= state.attentionDuration) {
-      state.attentionElapsed = 0;
-      state.attentionDuration = 5.0 + Math.random() * 5.0;
+    if (phase !== 'companionIdle') {
+      // ═════════════════════════════════════════════════════════════════════════
+      // ── CINEMATIC TRANSFORMERS INTRO CHOREOGRAPHY ──
+      // ═════════════════════════════════════════════════════════════════════════
+      updateIntroChoreography({
+        phase,
+        setPhase,
+        elapsed: introElapsedRef.current,
+        safeDt,
+        wallT,
+        isAppReady,
+        bones: bones as unknown as Record<string, THREE.Bone | null>,
+        rests,
+        group: groupRef.current,
+        currentPos: currentPosRef.current,
+        bodyRot: bodyRotRef.current,
+        thrusterIntensityRef,
+        matEyesRef,
+        pointerRef,
+        halfW,
+        halfH,
+        homeX,
+        homeY,
+        heroScale,
+        companionScale,
+        baseRotY,
+      });
 
-      const attRoll = Math.random();
-      if (attRoll < 0.55) {
-        state.attention = 'follow';
-      } else if (attRoll < 0.75) {
-        state.attention = 'curious';
-      } else if (attRoll < 0.90) {
-        state.attention = 'distracted';
-      } else {
-        state.attention = 'ignore';
-      }
-    }
-
-    // ── 4. Spatial Position & Physics ──
-    if (state.current === 'idle') {
-      targetPosRef.current.set(homeX, homeY, 0);
-    } else if (state.current === 'flying') {
-      // Dips or swoops down when visitor scrolls down, rises when scrolling up
-      const scrollShiftY = THREE.MathUtils.clamp(
-        -scroll.direction * (Math.abs(scroll.velocity) * 0.002),
-        -1.3,
-        1.3
+      groupRef.current.position.copy(currentPosRef.current);
+      groupRef.current.rotation.set(
+        bodyRotRef.current.x,
+        bodyRotRef.current.y,
+        bodyRotRef.current.z
       );
-      const lateralShiftX = Math.sin(wallT * 3.5) * 0.45;
-      targetPosRef.current.set(homeX + lateralShiftX, homeY + scrollShiftY, 0);
-    }
+    } else {
+      // ═════════════════════════════════════════════════════════════════════════
+      // ── AUTONOMOUS COMPANION STATE MACHINE ──
+      // ═════════════════════════════════════════════════════════════════════════
+      groupRef.current.scale.setScalar(companionScale);
+      if (matEyesRef.current) matEyesRef.current.emissiveIntensity = 2.8;
 
-    // Gentle hover bobbing
-    const hoverY = Math.sin(wallT * 2.0) * 0.065;
-    const hoverX = Math.cos(wallT * 1.3) * 0.035;
-    const finalTarget = new THREE.Vector3(
-      targetPosRef.current.x + hoverX,
-      targetPosRef.current.y + hoverY,
-      targetPosRef.current.z
-    );
+      // Decay timers & cooldowns
+      const state = stateRef.current;
+      state.elapsed += safeDt;
+      state.attentionElapsed += safeDt;
+      state.nextWander -= safeDt;
 
-    const posLerp = state.current === 'flying' ? 5.5 : 3.0;
-    currentPosRef.current.lerp(finalTarget, 1 - Math.exp(-posLerp * safeDt));
-    groupRef.current.position.copy(currentPosRef.current);
+      Object.keys(state.cooldowns).forEach((k) => {
+        state.cooldowns[k] -= safeDt;
+        if (state.cooldowns[k] <= 0) delete state.cooldowns[k];
+      });
 
-    // ── 5. Body Rotation & Aerodynamic Banking ──
-    const velX = (finalTarget.x - currentPosRef.current.x) * 3;
-    const velY = (finalTarget.y - currentPosRef.current.y) * 3;
+      // ── 1. Scroll Detection & Flight Reaction ──
+      const scroll = scrollRef.current;
+      const isScrollingFast = Math.abs(scroll.velocity) > 120;
 
-    // Bank into lateral curves
-    const bankZ = THREE.MathUtils.clamp(-velX * 0.25, -0.35, 0.35);
+      if (isScrollingFast && state.current !== 'flying' && !reducedMotion) {
+        state.current = 'flying';
+        state.elapsed = 0;
+        state.duration = 2.5;
+      }
 
-    // Pitch forward when flying
-    let pitchX = THREE.MathUtils.clamp(velY * 0.18, -0.35, 0.45);
-    if (state.current === 'flying') {
-      pitchX += 0.25;
-    }
+      scroll.velocity *= Math.exp(-3.5 * safeDt);
 
-    // Yaw: facing forward + slight cursor follow
-    const ptr = pointerRef.current;
-    let targetYaw = baseRotY;
-    if (state.attention === 'follow') {
-      targetYaw += ptr.x * 0.22;
-    }
+      // ── 2. Behavior State Machine Scheduling ──
+      if (state.elapsed >= state.duration) {
+        state.elapsed = 0;
 
-    const rotSpeed = 4.5;
-    bodyRotRef.current.x += (pitchX - bodyRotRef.current.x) * (1 - Math.exp(-rotSpeed * safeDt));
-    bodyRotRef.current.y += (targetYaw - bodyRotRef.current.y) * (1 - Math.exp(-rotSpeed * safeDt));
-    bodyRotRef.current.z += (bankZ - bodyRotRef.current.z) * (1 - Math.exp(-rotSpeed * safeDt));
+        if (state.current === 'flying' && !isScrollingFast) {
+          state.current = 'idle';
+          state.duration = 3.5 + Math.random() * 2.5;
+          targetPosRef.current.set(homeX, homeY, 0);
+        } else if (state.current !== 'idle') {
+          state.current = Math.random() > 0.4 ? 'idle' : 'floating';
+          state.duration = 3.0 + Math.random() * 3.0;
+        } else {
+          const roll = Math.random();
+          if (roll < 0.22 && !state.cooldowns['wave']) {
+            state.current = 'wave';
+            state.duration = 3.2;
+            state.cooldowns['wave'] = 14.0;
+          } else if (roll < 0.42 && !state.cooldowns['thinking']) {
+            state.current = 'thinking';
+            state.duration = 3.8;
+            state.cooldowns['thinking'] = 16.0;
+          } else if (roll < 0.58 && !state.cooldowns['happy']) {
+            state.current = 'happy';
+            state.duration = 3.2;
+            state.cooldowns['happy'] = 18.0;
+          } else if (roll < 0.78) {
+            state.current = 'lookAround';
+            state.duration = 4.0;
+          } else if (!reducedMotion) {
+            // Autonomous excursion from top-right across the screen
+            state.current = 'floating';
+            state.duration = 5.0 + Math.random() * 3.0;
 
-    groupRef.current.rotation.set(
-      bodyRotRef.current.x,
-      bodyRotRef.current.y,
-      bodyRotRef.current.z
-    );
+            // Waypoints anchored around upper half & right side
+            const wanderX = halfW * 0.3 + (Math.random() * 1.0 - 0.5) * (halfW * 0.8);
+            const wanderY = halfH * 0.4 + (Math.random() * 0.8 - 0.4) * (halfH * 0.6);
+            targetPosRef.current.set(wanderX, wanderY, 0);
+          } else {
+            state.current = 'idle';
+            state.duration = 4.0;
+          }
+        }
+      }
 
-    // ── 6. Torso & Spine Idle Breathing ──
-    if (bones.spine001) {
-      const breath = Math.sin(wallT * 1.6) * 0.03;
-      slerpBone(bones.spine001, R(bones.spine001), localDelta(_axisX, breath), 3, safeDt);
-    }
+      // ── 3. Attention Mode Cycling ──
+      if (state.attentionElapsed >= state.attentionDuration) {
+        state.attentionElapsed = 0;
+        state.attentionDuration = 5.0 + Math.random() * 5.0;
 
-    // ── 7. Head & Neck Attention Tracking ──
-    const hasHeadGesture =
-      state.current === 'thinking' ||
-      state.current === 'happy' ||
-      state.current === 'lookAround';
+        const attRoll = Math.random();
+        if (attRoll < 0.55) {
+          state.attention = 'follow';
+        } else if (attRoll < 0.75) {
+          state.attention = 'curious';
+        } else if (attRoll < 0.90) {
+          state.attention = 'distracted';
+        } else {
+          state.attention = 'ignore';
+        }
+      }
 
-    if (bones.head && !hasHeadGesture) {
-      let yaw = 0;
-      let pitch = 0;
-      let roll = 0;
+      // ── 4. Spatial Position & Physics ──
+      if (state.current === 'idle') {
+        targetPosRef.current.set(homeX, homeY, 0);
+      } else if (state.current === 'flying') {
+        // Dips or swoops down when visitor scrolls down, rises when scrolling up
+        const scrollShiftY = THREE.MathUtils.clamp(
+          -scroll.direction * (Math.abs(scroll.velocity) * 0.002),
+          -1.3,
+          1.3
+        );
+        const lateralShiftX = Math.sin(wallT * 3.5) * 0.45;
+        targetPosRef.current.set(homeX + lateralShiftX, homeY + scrollShiftY, 0);
+      }
 
+      // Gentle hover bobbing
+      const hoverY = Math.sin(wallT * 2.0) * 0.065;
+      const hoverX = Math.cos(wallT * 1.3) * 0.035;
+      const finalTarget = new THREE.Vector3(
+        targetPosRef.current.x + hoverX,
+        targetPosRef.current.y + hoverY,
+        targetPosRef.current.z
+      );
+
+      const posLerp = state.current === 'flying' ? 5.5 : 3.0;
+      currentPosRef.current.lerp(finalTarget, 1 - Math.exp(-posLerp * safeDt));
+      groupRef.current.position.copy(currentPosRef.current);
+
+      // ── 5. Body Rotation & Aerodynamic Banking ──
+      const velX = (finalTarget.x - currentPosRef.current.x) * 3;
+      const velY = (finalTarget.y - currentPosRef.current.y) * 3;
+
+      // Bank into lateral curves
+      const bankZ = THREE.MathUtils.clamp(-velX * 0.25, -0.35, 0.35);
+
+      // Pitch forward when flying
+      let pitchX = THREE.MathUtils.clamp(velY * 0.18, -0.35, 0.45);
+      if (state.current === 'flying') {
+        pitchX += 0.25;
+      }
+
+      // Yaw: facing forward + slight cursor follow
+      const ptr = pointerRef.current;
+      let targetYaw = baseRotY;
       if (state.attention === 'follow') {
-        yaw = THREE.MathUtils.clamp(ptr.x * 0.6, -0.65, 0.65);
-        pitch = THREE.MathUtils.clamp(-ptr.y * 0.4, -0.4, 0.3);
-      } else if (state.attention === 'curious') {
-        yaw = THREE.MathUtils.clamp(ptr.x * 0.5, -0.5, 0.5);
-        pitch = THREE.MathUtils.clamp(-ptr.y * 0.3, -0.3, 0.25);
-        roll = 0.25; // inquisitive head tilt
-      } else if (state.attention === 'distracted') {
-        yaw = Math.sin(wallT * 0.9) * 0.45;
-        pitch = -0.15;
-      } else {
-        pitch = Math.sin(wallT * 1.4) * 0.03;
+        targetYaw += ptr.x * 0.22;
       }
 
-      const idleNod = Math.sin(wallT * 1.5) * 0.02;
-      const headDelta = localDelta(_axisY, yaw)
-        .multiply(localDelta(_axisX, pitch + idleNod))
-        .multiply(localDelta(_axisZ, roll));
+      const rotSpeed = 4.5;
+      bodyRotRef.current.x += (pitchX - bodyRotRef.current.x) * (1 - Math.exp(-rotSpeed * safeDt));
+      bodyRotRef.current.y += (targetYaw - bodyRotRef.current.y) * (1 - Math.exp(-rotSpeed * safeDt));
+      bodyRotRef.current.z += (bankZ - bodyRotRef.current.z) * (1 - Math.exp(-rotSpeed * safeDt));
 
-      slerpBone(bones.head, R(bones.head), headDelta, 6, safeDt);
+      groupRef.current.rotation.set(
+        bodyRotRef.current.x,
+        bodyRotRef.current.y,
+        bodyRotRef.current.z
+      );
+
+      // ── 6. Torso & Spine Idle Breathing ──
+      if (bones.spine001) {
+        const breath = Math.sin(wallT * 1.6) * 0.03;
+        slerpBone(bones.spine001, R(bones.spine001), localDelta(_axisX, breath), 3, safeDt);
+      }
+
+      // ── 7. Head & Neck Attention Tracking ──
+      const hasHeadGesture =
+        state.current === 'thinking' ||
+        state.current === 'happy' ||
+        state.current === 'lookAround';
+
+      if (bones.head && !hasHeadGesture) {
+        let yaw = 0;
+        let pitch = 0;
+        let roll = 0;
+
+        if (state.attention === 'follow') {
+          yaw = THREE.MathUtils.clamp(ptr.x * 0.6, -0.65, 0.65);
+          pitch = THREE.MathUtils.clamp(-ptr.y * 0.4, -0.4, 0.3);
+        } else if (state.attention === 'curious') {
+          yaw = THREE.MathUtils.clamp(ptr.x * 0.5, -0.5, 0.5);
+          pitch = THREE.MathUtils.clamp(-ptr.y * 0.3, -0.3, 0.25);
+          roll = 0.25; // inquisitive head tilt
+        } else if (state.attention === 'distracted') {
+          yaw = Math.sin(wallT * 0.9) * 0.45;
+          pitch = -0.15;
+        } else {
+          pitch = Math.sin(wallT * 1.4) * 0.03;
+        }
+
+        const idleNod = Math.sin(wallT * 1.5) * 0.02;
+        const headDelta = localDelta(_axisY, yaw)
+          .multiply(localDelta(_axisX, pitch + idleNod))
+          .multiply(localDelta(_axisZ, roll));
+
+        slerpBone(bones.head, R(bones.head), headDelta, 6, safeDt);
+      }
+
+      if (bones.neck && !hasHeadGesture) {
+        const neckYaw = state.attention === 'follow' ? ptr.x * 0.22 : 0;
+        const neckPitch = state.attention === 'follow' ? -ptr.y * 0.15 : 0;
+        const neckDelta = localDelta(_axisY, neckYaw).multiply(localDelta(_axisX, neckPitch));
+        slerpBone(bones.neck, R(bones.neck), neckDelta, 4.5, safeDt);
+      }
+
+      // ── 8. Gesture State Dispatches ──
+      const t = state.elapsed;
+
+      switch (state.current) {
+        case 'idle':
+        case 'floating': {
+          const armSway = Math.sin(wallT * 1.4) * 0.06;
+          if (bones.upperArmL)
+            slerpBone(bones.upperArmL, R(bones.upperArmL), localDelta(_axisX, armSway), 3, safeDt);
+          if (bones.upperArmR)
+            slerpBone(bones.upperArmR, R(bones.upperArmR), localDelta(_axisX, -armSway), 3, safeDt);
+
+          if (bones.forearmL) restoreBone(bones.forearmL, R(bones.forearmL), 3.5, safeDt);
+          if (bones.forearmR) restoreBone(bones.forearmR, R(bones.forearmR), 3.5, safeDt);
+          if (bones.handL) restoreBone(bones.handL, R(bones.handL), 3.5, safeDt);
+          if (bones.handR) restoreBone(bones.handR, R(bones.handR), 3.5, safeDt);
+
+          if (bones.thighL) restoreBone(bones.thighL, R(bones.thighL), 3, safeDt);
+          if (bones.thighR) restoreBone(bones.thighR, R(bones.thighR), 3, safeDt);
+          if (bones.shinL) restoreBone(bones.shinL, R(bones.shinL), 3, safeDt);
+          if (bones.shinR) restoreBone(bones.shinR, R(bones.shinR), 3, safeDt);
+          break;
+        }
+
+        case 'flying': {
+          if (bones.thighL)
+            slerpBone(bones.thighL, R(bones.thighL), localDelta(_axisX, -0.45), 6, safeDt);
+          if (bones.thighR)
+            slerpBone(bones.thighR, R(bones.thighR), localDelta(_axisX, -0.45), 6, safeDt);
+          if (bones.shinL)
+            slerpBone(bones.shinL, R(bones.shinL), localDelta(_axisX, 0.4), 6, safeDt);
+          if (bones.shinR)
+            slerpBone(bones.shinR, R(bones.shinR), localDelta(_axisX, 0.4), 6, safeDt);
+
+          if (bones.upperArmL)
+            slerpBone(bones.upperArmL, R(bones.upperArmL), localDelta(_axisX, -0.3), 5, safeDt);
+          if (bones.upperArmR)
+            slerpBone(bones.upperArmR, R(bones.upperArmR), localDelta(_axisX, -0.3), 5, safeDt);
+
+          if (bones.forearmL)
+            slerpBone(bones.forearmL, R(bones.forearmL), localDelta(_axisX, 0.25), 5, safeDt);
+          if (bones.forearmR)
+            slerpBone(bones.forearmR, R(bones.forearmR), localDelta(_axisX, 0.25), 5, safeDt);
+          break;
+        }
+
+        case 'wave': {
+          if (bones.upperArmR) {
+            slerpBone(bones.upperArmR, R(bones.upperArmR), localDelta(_axisZ, -1.35), 6, safeDt);
+          }
+          if (bones.forearmR) {
+            slerpBone(bones.forearmR, R(bones.forearmR), localDelta(_axisX, 1.25), 6, safeDt);
+          }
+          if (bones.handR) {
+            const wave = Math.sin(t * 8.5) * 0.6;
+            slerpBone(bones.handR, R(bones.handR), localDelta(_axisZ, wave), 10, safeDt);
+          }
+
+          if (bones.upperArmL) restoreBone(bones.upperArmL, R(bones.upperArmL), 3, safeDt);
+          if (bones.forearmL) restoreBone(bones.forearmL, R(bones.forearmL), 3, safeDt);
+          break;
+        }
+
+        case 'thinking': {
+          if (bones.head) {
+            const thinkTilt = localDelta(_axisZ, 0.32).multiply(
+              localDelta(_axisX, 0.12 + Math.sin(wallT * 2.2) * 0.04)
+            );
+            slerpBone(bones.head, R(bones.head), thinkTilt, 5, safeDt);
+          }
+
+          if (bones.upperArmR) {
+            const raise = localDelta(_axisZ, -0.65).multiply(localDelta(_axisX, 0.45));
+            slerpBone(bones.upperArmR, R(bones.upperArmR), raise, 5, safeDt);
+          }
+          if (bones.forearmR) {
+            slerpBone(bones.forearmR, R(bones.forearmR), localDelta(_axisX, 1.35), 5, safeDt);
+          }
+          if (bones.handR) {
+            slerpBone(bones.handR, R(bones.handR), localDelta(_axisZ, 0.25), 5, safeDt);
+          }
+
+          if (bones.upperArmL) restoreBone(bones.upperArmL, R(bones.upperArmL), 3, safeDt);
+          if (bones.forearmL) restoreBone(bones.forearmL, R(bones.forearmL), 3, safeDt);
+          break;
+        }
+
+        case 'happy': {
+          if (bones.upperArmL)
+            slerpBone(bones.upperArmL, R(bones.upperArmL), localDelta(_axisZ, 1.35), 6, safeDt);
+          if (bones.upperArmR)
+            slerpBone(bones.upperArmR, R(bones.upperArmR), localDelta(_axisZ, -1.35), 6, safeDt);
+
+          if (bones.forearmL)
+            slerpBone(bones.forearmL, R(bones.forearmL), localDelta(_axisX, 0.5), 6, safeDt);
+          if (bones.forearmR)
+            slerpBone(bones.forearmR, R(bones.forearmR), localDelta(_axisX, 0.5), 6, safeDt);
+
+          if (bones.head) {
+            const cheerNod = Math.sin(t * 6.5) * 0.06;
+            slerpBone(bones.head, R(bones.head), localDelta(_axisX, -0.22 + cheerNod), 7, safeDt);
+          }
+
+          if (bones.chest) {
+            const cheer = Math.sin(t * 6.5) * 0.08;
+            slerpBone(bones.chest, R(bones.chest), localDelta(_axisX, cheer), 7, safeDt);
+          }
+          break;
+        }
+
+        case 'lookAround': {
+          if (bones.head) {
+            const sweepYaw = Math.sin(t * 1.5) * 0.5;
+            const sweepPitch = Math.sin(t * 0.8) * 0.2;
+            slerpBone(
+              bones.head,
+              R(bones.head),
+              localDelta(_axisY, sweepYaw).multiply(localDelta(_axisX, sweepPitch)),
+              4,
+              safeDt
+            );
+          }
+          if (bones.neck) {
+            const sweepYaw = Math.sin(t * 1.5) * 0.2;
+            slerpBone(bones.neck, R(bones.neck), localDelta(_axisY, sweepYaw), 3.5, safeDt);
+          }
+          break;
+        }
+      }
+    } // End of else (companionIdle)
+
+    // ── Reactive Jet Thrusters ──
+    if (phase === 'companionIdle') {
+      const targetIntensity =
+        stateRef.current.current === 'flying'
+          ? 1.0
+          : stateRef.current.current === 'floating'
+            ? 0.42
+            : stateRef.current.current === 'happy' || stateRef.current.current === 'wave'
+              ? 0.35
+              : 0.22;
+
+      thrusterIntensityRef.current +=
+        (targetIntensity - thrusterIntensityRef.current) * (1 - Math.exp(-4.5 * safeDt));
     }
-
-    if (bones.neck && !hasHeadGesture) {
-      const neckYaw = state.attention === 'follow' ? ptr.x * 0.22 : 0;
-      const neckPitch = state.attention === 'follow' ? -ptr.y * 0.15 : 0;
-      const neckDelta = localDelta(_axisY, neckYaw).multiply(localDelta(_axisX, neckPitch));
-      slerpBone(bones.neck, R(bones.neck), neckDelta, 4.5, safeDt);
-    }
-
-    // ── 8. Gesture State Dispatches ──
-    const t = state.elapsed;
-
-    switch (state.current) {
-      case 'idle':
-      case 'floating': {
-        const armSway = Math.sin(wallT * 1.4) * 0.06;
-        if (bones.upperArmL)
-          slerpBone(bones.upperArmL, R(bones.upperArmL), localDelta(_axisX, armSway), 3, safeDt);
-        if (bones.upperArmR)
-          slerpBone(bones.upperArmR, R(bones.upperArmR), localDelta(_axisX, -armSway), 3, safeDt);
-
-        if (bones.forearmL) restoreBone(bones.forearmL, R(bones.forearmL), 3.5, safeDt);
-        if (bones.forearmR) restoreBone(bones.forearmR, R(bones.forearmR), 3.5, safeDt);
-        if (bones.handL) restoreBone(bones.handL, R(bones.handL), 3.5, safeDt);
-        if (bones.handR) restoreBone(bones.handR, R(bones.handR), 3.5, safeDt);
-
-        if (bones.thighL) restoreBone(bones.thighL, R(bones.thighL), 3, safeDt);
-        if (bones.thighR) restoreBone(bones.thighR, R(bones.thighR), 3, safeDt);
-        if (bones.shinL) restoreBone(bones.shinL, R(bones.shinL), 3, safeDt);
-        if (bones.shinR) restoreBone(bones.shinR, R(bones.shinR), 3, safeDt);
-        break;
-      }
-
-      case 'flying': {
-        if (bones.thighL)
-          slerpBone(bones.thighL, R(bones.thighL), localDelta(_axisX, -0.45), 6, safeDt);
-        if (bones.thighR)
-          slerpBone(bones.thighR, R(bones.thighR), localDelta(_axisX, -0.45), 6, safeDt);
-        if (bones.shinL)
-          slerpBone(bones.shinL, R(bones.shinL), localDelta(_axisX, 0.4), 6, safeDt);
-        if (bones.shinR)
-          slerpBone(bones.shinR, R(bones.shinR), localDelta(_axisX, 0.4), 6, safeDt);
-
-        if (bones.upperArmL)
-          slerpBone(bones.upperArmL, R(bones.upperArmL), localDelta(_axisX, -0.3), 5, safeDt);
-        if (bones.upperArmR)
-          slerpBone(bones.upperArmR, R(bones.upperArmR), localDelta(_axisX, -0.3), 5, safeDt);
-
-        if (bones.forearmL)
-          slerpBone(bones.forearmL, R(bones.forearmL), localDelta(_axisX, 0.25), 5, safeDt);
-        if (bones.forearmR)
-          slerpBone(bones.forearmR, R(bones.forearmR), localDelta(_axisX, 0.25), 5, safeDt);
-        break;
-      }
-
-      case 'wave': {
-        if (bones.upperArmR) {
-          slerpBone(bones.upperArmR, R(bones.upperArmR), localDelta(_axisZ, -1.35), 6, safeDt);
-        }
-        if (bones.forearmR) {
-          slerpBone(bones.forearmR, R(bones.forearmR), localDelta(_axisX, 1.25), 6, safeDt);
-        }
-        if (bones.handR) {
-          const wave = Math.sin(t * 8.5) * 0.6;
-          slerpBone(bones.handR, R(bones.handR), localDelta(_axisZ, wave), 10, safeDt);
-        }
-
-        if (bones.upperArmL) restoreBone(bones.upperArmL, R(bones.upperArmL), 3, safeDt);
-        if (bones.forearmL) restoreBone(bones.forearmL, R(bones.forearmL), 3, safeDt);
-        break;
-      }
-
-      case 'thinking': {
-        if (bones.head) {
-          const thinkTilt = localDelta(_axisZ, 0.32).multiply(
-            localDelta(_axisX, 0.12 + Math.sin(wallT * 2.2) * 0.04)
-          );
-          slerpBone(bones.head, R(bones.head), thinkTilt, 5, safeDt);
-        }
-
-        if (bones.upperArmR) {
-          const raise = localDelta(_axisZ, -0.65).multiply(localDelta(_axisX, 0.45));
-          slerpBone(bones.upperArmR, R(bones.upperArmR), raise, 5, safeDt);
-        }
-        if (bones.forearmR) {
-          slerpBone(bones.forearmR, R(bones.forearmR), localDelta(_axisX, 1.35), 5, safeDt);
-        }
-        if (bones.handR) {
-          slerpBone(bones.handR, R(bones.handR), localDelta(_axisZ, 0.25), 5, safeDt);
-        }
-
-        if (bones.upperArmL) restoreBone(bones.upperArmL, R(bones.upperArmL), 3, safeDt);
-        if (bones.forearmL) restoreBone(bones.forearmL, R(bones.forearmL), 3, safeDt);
-        break;
-      }
-
-      case 'happy': {
-        if (bones.upperArmL)
-          slerpBone(bones.upperArmL, R(bones.upperArmL), localDelta(_axisZ, 1.35), 6, safeDt);
-        if (bones.upperArmR)
-          slerpBone(bones.upperArmR, R(bones.upperArmR), localDelta(_axisZ, -1.35), 6, safeDt);
-
-        if (bones.forearmL)
-          slerpBone(bones.forearmL, R(bones.forearmL), localDelta(_axisX, 0.5), 6, safeDt);
-        if (bones.forearmR)
-          slerpBone(bones.forearmR, R(bones.forearmR), localDelta(_axisX, 0.5), 6, safeDt);
-
-        if (bones.head) {
-          const cheerNod = Math.sin(t * 6.5) * 0.06;
-          slerpBone(bones.head, R(bones.head), localDelta(_axisX, -0.22 + cheerNod), 7, safeDt);
-        }
-
-        if (bones.chest) {
-          const cheer = Math.sin(t * 6.5) * 0.08;
-          slerpBone(bones.chest, R(bones.chest), localDelta(_axisX, cheer), 7, safeDt);
-        }
-        break;
-      }
-
-      case 'lookAround': {
-        if (bones.head) {
-          const sweepYaw = Math.sin(t * 1.5) * 0.5;
-          const sweepPitch = Math.sin(t * 0.8) * 0.2;
-          slerpBone(
-            bones.head,
-            R(bones.head),
-            localDelta(_axisY, sweepYaw).multiply(localDelta(_axisX, sweepPitch)),
-            4,
-            safeDt
-          );
-        }
-        if (bones.neck) {
-          const sweepYaw = Math.sin(t * 1.5) * 0.2;
-          slerpBone(bones.neck, R(bones.neck), localDelta(_axisY, sweepYaw), 3.5, safeDt);
-        }
-        break;
-      }
-    }
-
-    // ── 9. Reactive Jet Thrusters ──
-    const targetIntensity =
-      state.current === 'flying'
-        ? 1.0
-        : state.current === 'floating'
-        ? 0.42
-        : state.current === 'happy' || state.current === 'wave'
-        ? 0.35
-        : 0.22;
-
-    thrusterIntensityRef.current +=
-      (targetIntensity - thrusterIntensityRef.current) * (1 - Math.exp(-4.5 * safeDt));
 
     // Anchors are physically attached at the boot soles (Cube011 & Cube010)
     if (footAnchorLRef.current && thrusterLRef.current) {
@@ -823,21 +895,25 @@ function CompanionModel({
     }
   });
 
+  const thrusterScale = groupRef.current ? groupRef.current.scale.x / 0.20 : 1.0;
+
   return (
     <>
-      <group ref={groupRef} scale={modelScale}>
+      <group ref={groupRef}>
         <primitive object={scene} />
       </group>
       <group ref={thrusterLRef}>
         <JetThrusterEffect
           intensityRef={thrusterIntensityRef}
           reducedMotion={reducedMotion}
+          scale={thrusterScale}
         />
       </group>
       <group ref={thrusterRRef}>
         <JetThrusterEffect
           intensityRef={thrusterIntensityRef}
           reducedMotion={reducedMotion}
+          scale={thrusterScale}
         />
       </group>
     </>
@@ -845,7 +921,7 @@ function CompanionModel({
 }
 
 // ─── Global Floating Wrapper Component ─────────────────────────────────────────
-export default function FloatingRobot() {
+function FloatingRobotInner() {
   const { primary } = useTheme();
 
   const pointerRef = useRef({ x: 0, y: 0, movedAt: 0 });
@@ -903,41 +979,55 @@ export default function FloatingRobot() {
   if (!mounted) return null;
 
   return (
-    <div
-      className="fixed inset-0 pointer-events-none z-40 overflow-hidden select-none"
-      aria-hidden="true"
-      style={{ pointerEvents: 'none' }}
-    >
-      <Canvas
-        camera={{ position: [0, 0, 7.5], fov: 45 }}
-        gl={{
-          antialias: true,
-          alpha: true,
-          powerPreference: 'high-performance',
-        }}
-        dpr={isMobile ? [1, 1.25] : [1, 1.5]}
+    <>
+      {/* ── Cinematic Transformers Intro Overlay & Backdrop ── */}
+      <RobotIntroOverlay />
+
+      {/* ── 3D Scene Layer (Always full-screen, transparent) ── */}
+      <div
+        className="fixed inset-0 pointer-events-none z-40 overflow-hidden select-none"
+        aria-hidden="true"
         style={{ pointerEvents: 'none' }}
       >
-        {/* Studio Lighting tuned for metallic yellow and glossy black */}
-        <ambientLight intensity={1.1} />
-        {/* Key light shining down from top-right */}
-        <directionalLight position={[4, 7, 5]} intensity={2.0} />
-        {/* Secondary fill light from left */}
-        <directionalLight position={[-5, 4, 3]} intensity={1.2} color="#ffffff" />
-        {/* Warm automotive rim light */}
-        <directionalLight position={[2, -3, -4]} intensity={1.8} color="#FFBE00" />
-        {/* Cyan optical bounce light */}
-        <pointLight position={[3, 2, 4]} intensity={0.9} color="#00CFFF" />
-        <pointLight position={[-2, -2, 2]} intensity={0.5} color="#ffffff" />
+        <Canvas
+          camera={{ position: [0, 0, 7.5], fov: 45 }}
+          gl={{
+            antialias: true,
+            alpha: true,
+            powerPreference: 'high-performance',
+          }}
+          dpr={isMobile ? [1, 1.25] : [1, 1.5]}
+          style={{ pointerEvents: 'none' }}
+        >
+          {/* Studio Lighting tuned for metallic yellow and glossy black */}
+          <ambientLight intensity={1.1} />
+          {/* Key light shining down from top-right */}
+          <directionalLight position={[4, 7, 5]} intensity={2.0} />
+          {/* Secondary fill light from left */}
+          <directionalLight position={[-5, 4, 3]} intensity={1.2} color="#ffffff" />
+          {/* Warm automotive rim light */}
+          <directionalLight position={[2, -3, -4]} intensity={1.8} color="#FFBE00" />
+          {/* Cyan optical bounce light */}
+          <pointLight position={[3, 2, 4]} intensity={0.9} color="#00CFFF" />
+          <pointLight position={[-2, -2, 2]} intensity={0.5} color="#ffffff" />
 
-        <CompanionModel
-          primaryColor={primary}
-          pointerRef={pointerRef}
-          scrollRef={scrollRef}
-          reducedMotion={reducedMotion}
-          isMobile={isMobile}
-        />
-      </Canvas>
-    </div>
+          <CompanionModel
+            primaryColor={primary}
+            pointerRef={pointerRef}
+            scrollRef={scrollRef}
+            reducedMotion={reducedMotion}
+            isMobile={isMobile}
+          />
+        </Canvas>
+      </div>
+    </>
+  );
+}
+
+export default function FloatingRobot() {
+  return (
+    <RobotIntroProvider>
+      <FloatingRobotInner />
+    </RobotIntroProvider>
   );
 }

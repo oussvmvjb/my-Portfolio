@@ -89,15 +89,52 @@ export interface ExperienceContent {
   items: ExperienceItem[];
 }
 
+export interface ProjectStack {
+  frontend: string[];
+  backend: string[];
+  database: string[];
+  tools: string[];
+}
+
+export interface ProjectImage {
+  src: string;
+  alt: string;
+}
+
+export interface ProjectFeature {
+  title: string;
+  description: string;
+  icon?: string;
+}
+
+export interface ProjectArchitectureService {
+  name: string;
+  description: string;
+  features: string[];
+  color?: string;
+}
+
 export interface ProjectItem {
   id: string;
   title: string;
+  tagline?: string;
   category: string[];
-  featured: boolean;
+  featured?: boolean;
   description: string;
-  tech: string[];
-  github: string;
-  live: string;
+  tech?: string[];
+  stack: ProjectStack;
+  github?: string;
+  live?: string;
+  images: ProjectImage[];
+  // Extended fields for details page
+  overview?: string;
+  problem?: string;
+  solution?: string;
+  features?: ProjectFeature[];
+  challenges?: string[];
+  achievements?: string[];
+  relatedRepositories?: { label: string; url: string }[];
+  architectureServices?: ProjectArchitectureService[];
 }
 
 export interface ProjectsContent {
